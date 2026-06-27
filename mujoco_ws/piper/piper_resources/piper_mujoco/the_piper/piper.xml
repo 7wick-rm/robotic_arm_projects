@@ -1,0 +1,255 @@
+<!--
+  piper.xml — Piper 6-DOF arm + gripper MJCF
+  ═══════════════════════════════════════════════════════════════════════
+  Conventions
+    eulerseq="XYZ"  — extrinsic X→Y→Z rotations, equivalent to URDF rpy.
+    angle="radian"  — no unit conversion needed.
+    meshdir         — OBJ meshes relative to this file.
+
+  Actuators
+    <position> servo type. mujoco_ros2_control sends position targets via
+    the "position" command_interface; MuJoCo's built-in PD servo (kp/kv)
+    drives each joint.
+
+  Gripper contact tuning
+    Finger geoms use condim=6 + high friction + stiff solimp/solref,
+    matching the object contact params in scene.xml, so grip force is
+    transferred cleanly without the block slipping or flying away.
+  ═══════════════════════════════════════════════════════════════════════
+-->
+<mujoco model="piper">
+
+  <!--
+    NOTE: timestep and integrator are set in scene.xml <option>, which
+    overrides any value here. These are kept for standalone testing only.
+  -->
+  <option integrator="implicitfast" timestep="0.0005" gravity="0 0 -9.81"/>
+
+  <compiler angle="radian" eulerseq="XYZ"
+            meshdir="../../piper_description/meshes"/>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       ASSETS
+       ═══════════════════════════════════════════════════════════════════ -->
+  <asset>
+    <!-- Arm links -->
+    <mesh name="base_link"         file="base_link.obj"/>
+    <mesh name="link1"             file="link1.obj"/>
+    <mesh name="link2"             file="link2.obj"/>
+    <mesh name="link3"             file="link3.obj"/>
+    <mesh name="link4"             file="link4.obj"/>
+    <mesh name="link5"             file="link5.obj"/>
+    <!-- Gripper -->
+    <mesh name="gripper_base_link" file="gripper_base_link.obj"/>
+    <mesh name="right_finger"      file="right_finger.obj"/>
+    <mesh name="left_finger"       file="left_finger.obj"/>
+    <!-- Objects -->
+    <mesh name="lego_block1"       file="2x2.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="lego_block2"       file="4x2.stl" scale="0.001 0.001 0.001"/>
+
+    <!-- Arm link material — dark charcoal body -->
+    <material name="Charcoal"    rgba="0.15 0.15 0.15 1"
+                                 specular="0.4" shininess="0.5"/>
+    <!-- Joint-ring accent — brushed silver -->
+    <material name="Silver"   rgba="0.65 0.65 0.68 1"
+                                 specular="0.7" shininess="0.6"/>
+    <!-- Gripper — matte black -->
+    <material name="gripper_mat" rgba="0.10 0.10 0.10 1"
+                                 specular="0.2" shininess="0.3"/>
+  </asset>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       DEFAULTS
+       ═══════════════════════════════════════════════════════════════════ -->
+  <default>
+    <!-- Arm joints: standard damping, small armature for integrator stability -->
+    <joint armature="0.1" damping="5.0" frictionloss="0.0"/>
+
+    <!-- Default geom: condim=4 pyramid friction for arm links.
+         Finger geoms override this with condim=6 (see finger class below). -->
+    <geom condim="4" friction="1.0 0.005 0.0001"
+          contype="1" conaffinity="1"/>
+
+    <!--
+      Finger geom class — overrides the default for gripper contact.
+        condim=6     — full 6-DOF friction cone, essential for stable grasps.
+        friction     — matched to the object's friction in scene.xml so that
+                       contact forces are symmetric.
+        solimp/solref — stiff, fast contact; solref >= 2 × timestep = 0.002 s.
+    -->
+    <default class="finger">
+      <geom condim="6"
+            friction="1.5 0.05 0.005"
+            solimp="0.98 0.99 0.001 0.5 2"
+            solref="0.004 1"
+            contype="1" conaffinity="1"/>
+    </default>
+  </default>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       BODY TREE
+       ═══════════════════════════════════════════════════════════════════ -->
+  <worldbody>
+
+    <body name="base_link" pos="0 0 0">
+      <inertial pos="-0.00974 0 0.04101" mass="0.162"
+                fullinertia="2.26593e-04  2.69448e-04  2.22318e-04
+                            -7.33974e-08  2.13222e-06  8.15167e-09"/>
+      <geom type="mesh" mesh="base_link" material="Charcoal"/>
+
+      <!-- ── joint_1: revolute Z, ±2.68 rad ──────────────────────────
+           URDF: xyz="0 0 0.123"  rpy="0 0 -π/2"                      -->
+      <body name="link_1" pos="0 0 0.123" euler="0 0 -1.5707963">
+        <joint name="joint_1" type="hinge" pos="0 0 0" axis="0 0 1"
+               range="-2.68 2.68" actuatorfrcrange="-100 100"/>
+        <inertial pos="0.00131 0.00031 -0.00922" mass="0.097"
+                  fullinertia="7.76685e-05  9.24968e-05  8.24589e-05
+                               1.09085e-07 -1.97481e-06  9.91285e-07"/>
+        <geom type="mesh" mesh="link1" material="Charcoal"/>
+
+        <!-- ── joint_2: revolute Z, [0, 3.4] rad ──────────────────────
+             URDF: xyz="0 0 0"  rpy="π/2 -0.10095 -π/2"               -->
+        <body name="link_2" pos="0 0 0" euler="1.5707963 -0.10095 -1.5707963">
+          <joint name="joint_2" type="hinge" pos="0 0 0" axis="0 0 1"
+                 range="0 3.4" actuatorfrcrange="-100 100"/>
+          <inertial pos="0.14761 -0.01742 0.00175" mass="0.289"
+                    fullinertia="1.50113e-04  1.72585e-03  1.77446e-03
+                                 8.58975e-05 -1.07428e-06 -9.93705e-07"/>
+          <geom type="mesh" mesh="link2" material="Silver"/>
+
+          <!-- ── joint_3: revolute Z, [-3.0, 0] rad ───────────────────
+               URDF: xyz="0.28503 0 0"  rpy="0 0 1.3826"              -->
+          <body name="link_3" pos="0.28503 0 0" euler="0 0 1.3826">
+            <joint name="joint_3" type="hinge" pos="0 0 0" axis="0 0 1"
+                   range="-3.0 0" actuatorfrcrange="-100 100"/>
+            <inertial pos="0.01567 0.10446 0.00050" mass="0.290"
+                      fullinertia="2.21686e-04  1.00859e-04  2.41839e-04
+                                  -7.57427e-06 -6.37001e-07 -8.16203e-07"/>
+            <geom type="mesh" mesh="link3" material="Charcoal"/>
+
+            <!-- ── joint_4: revolute -Z, ±1.85 rad ──────────────────
+                 URDF: xyz="0.021984 0.25075 0"  rpy="-π/2 0 0"       -->
+            <body name="link_4" pos="0.021984 0.25075 0" euler="-1.5707963 0 0">
+              <joint name="joint_4" type="hinge" pos="0 0 0" axis="0 0 -1"
+                     range="-1.85 1.85" actuatorfrcrange="-100 100"/>
+              <inertial pos="0.00027 -0.00102 -0.00472" mass="0.127"
+                        fullinertia="3.82012e-05  4.87049e-05  4.10592e-05
+                                    -4.92358e-08  4.89589e-08  6.70803e-08"/>
+              <geom type="mesh" mesh="link4" material="Silver"/>
+
+              <!-- ── joint_5: revolute Z, ±1.3 rad ───────────────────
+                   URDF: xyz="0 0 0"  rpy="π/2 -0.087266 0"           -->
+              <body name="link_5" pos="0 0 0" euler="1.5707963 -0.087266 0">
+                <joint name="joint_5" type="hinge" pos="0 0 0" axis="0 0 1"
+                       range="-1.3 1.3" actuatorfrcrange="-100 100"/>
+                <inertial pos="0 0.05668 -0.00196" mass="0.1447"
+                          fullinertia="4.39644e-05  5.63174e-05  4.88714e-05
+                                      -3.59215e-08 -1.89785e-08 -2.15408e-07"/>
+                <geom type="mesh" mesh="link5" material="Charcoal"/>
+
+                <!-- ── joint_6: revolute -Z, ±π ─────────────────────
+                     URDF: xyz="0 0.091 0.0014"  rpy="-π/2 0 0"       -->
+                <body name="link_6" pos="0 0.091 0.0014" euler="-1.5707963 0 0">
+                  <joint name="joint_6" type="hinge" pos="0 0 0" axis="0 0 -1"
+                         range="-3.14159265 3.14159265"
+                         actuatorfrcrange="-100 100"/>
+                  <inertial pos="0 0 0" mass="0.001"
+                            diaginertia="1e-6 1e-6 1e-6"/>
+
+                  <!-- IK tip frame — site carries no DOF or mass -->
+                  <site name="tool_0" pos="0 0 0" euler="0 0 0"/>
+
+                  <body name="gripper_base_link" pos="0 0 0">
+                    <inertial pos="0 0.00034 0.03421" mass="0.1502"
+                              fullinertia="4.31751e-05  9.99756e-05  1.18282e-04
+                                          -2.21296e-08 -3.27826e-12  1.10337e-07"/>
+                    <geom type="mesh" mesh="gripper_base_link" material="gripper_mat"/>
+
+                    <!-- FT sensor site at the wrist -->
+                    <site name="ft_sensor_fts_site" pos="0 0 0.05"
+                          euler="0 0 0" size="0.005"/>
+
+                    <!--
+                      right_finger: prismatic +Y, [0, 0.038] m
+                      class="finger" applies the stiff high-friction contact
+                      geom required for real-physics grasping.
+                      URDF: xyz="0 0 0.13503"  axis="0 1 0"
+                    -->
+                    <body name="right_finger" pos="0 0 0.13503">
+                      <joint name="gripper_joint" type="slide"
+                             pos="0 0 0" axis="0 1 0"
+                             range="0 0.038" actuatorfrcrange="-5 5"/>
+                      <inertial pos="-0.00027 -0.04676 -0.00921" mass="0.0265"
+                                fullinertia="9.99783e-06  6.17952e-06  1.42102e-05
+                                            -1.57548e-07 -2.71356e-08 -1.58940e-06"/>
+                      <geom type="mesh" mesh="right_finger"
+                            class="finger" material="gripper_mat"/>
+                    </body>
+
+                    <!--
+                      left_finger: prismatic -Y, [0, 0.038] m
+                      Positive q moves the finger in -Y (opens the left side).
+                      URDF: xyz="0 0 0.13503"  axis="0 -1 0"
+                    -->
+                    <body name="left_finger" pos="0 0 0.13503">
+                      <joint name="mimic_gripper_joint" type="slide"
+                             pos="0 0 0" axis="0 -1 0"
+                             range="0 0.038" actuatorfrcrange="-5 5"/>
+                      <inertial pos="0.00027 0.04676 -0.00921" mass="0.0265"
+                                fullinertia="9.99782e-06  6.17952e-06  1.42102e-05
+                                            -1.57548e-07  2.71356e-08  1.58940e-06"/>
+                      <geom type="mesh" mesh="left_finger"
+                            class="finger" material="gripper_mat"/>
+                    </body>
+
+                  </body>  <!-- gripper_base_link -->
+                </body>    <!-- link_6 -->
+              </body>      <!-- link_5 -->
+            </body>        <!-- link_4 -->
+          </body>          <!-- link_3 -->
+        </body>            <!-- link_2 -->
+      </body>              <!-- link_1 -->
+    </body>                <!-- base_link -->
+
+  </worldbody>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       ACTUATORS
+       Arm joints — kp/kv stiff enough for smooth MoveIt trajectory tracking.
+       Gripper    — high gains so fingers press firmly against the object.
+                    kp=3000 N/m → 3 N per finger at 1 mm penetration → ~6 N
+                    total grip force on a 50 g (0.5 N) block.
+       ═══════════════════════════════════════════════════════════════════ -->
+  <actuator>
+    <position name="joint_1"             joint="joint_1"             kp="500"  kv="50"  ctrlrange="-2.68 2.68"/>
+    <position name="joint_2"             joint="joint_2"             kp="500"  kv="50"  ctrlrange="0 3.4"/>
+    <position name="joint_3"             joint="joint_3"             kp="500"  kv="50"  ctrlrange="-3.0 0"/>
+    <position name="joint_4"             joint="joint_4"             kp="500"  kv="50"  ctrlrange="-1.85 1.85"/>
+    <position name="joint_5"             joint="joint_5"             kp="500"  kv="50"  ctrlrange="-1.3 1.3"/>
+    <position name="joint_6"             joint="joint_6"             kp="500"  kv="50"  ctrlrange="-3.14159 3.14159"/>
+    <position name="gripper_joint"       joint="gripper_joint"       kp="3000" kv="300" ctrlrange="0 0.038"/>
+    <position name="mimic_gripper_joint" joint="mimic_gripper_joint" kp="3000" kv="300" ctrlrange="0 0.038"/>
+  </actuator>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SENSORS
+       ═══════════════════════════════════════════════════════════════════ -->
+  <sensor>
+    <force  name="ft_sensor_fts_force"  site="ft_sensor_fts_site"/>
+    <torque name="ft_sensor_fts_torque" site="ft_sensor_fts_site"/>
+  </sensor>
+
+  <equality>
+    <joint joint1="gripper_joint" joint2="mimic_gripper_joint" polycoef="0 1 0 0 0"/>
+  </equality>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       KEYFRAMES
+       Order: joint_1 … joint_6, gripper_joint, mimic_gripper_joint
+       ═══════════════════════════════════════════════════════════════════ -->
+  <keyframe>
+    <key name="home"
+         qpos="0.0 0.01 -0.01 0.0 0.0 0.0 0.0 0.0"/>
+  </keyframe>
+
+</mujoco>

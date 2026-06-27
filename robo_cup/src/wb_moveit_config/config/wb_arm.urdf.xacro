@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="wb_arm">
+
+  <xacro:arg name="is_ignition" default="True"/>
+  <xacro:arg name="prefix" default=""/>
+  <xacro:arg name="controllers_file"
+    default="$(find wb_description)/config/ros2_controllers_robot1.yaml"/>
+
+  <xacro:include filename="$(find wb_description)/urdf/wb_arm_urdf.xacro"/>
+  <xacro:include filename="$(find wb_description)/urdf/ros2control.xacro"/>
+  <xacro:include filename="$(find wb_description)/urdf/gazebo.xacro"/>
+
+  <xacro:ros2_control_block prefix="$(arg prefix)"/>
+  <xacro:gazebo_block prefix="$(arg prefix)"/>
+
+</robot>
+
+
+
+
+
+
+
+
+
+<!-- <?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="wb_arm">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <xacro:include filename="$(find wb_description)/urdf/wb_arm_urdf.xacro" />
+
+    <xacro:include filename="wb_arm.ros2_control.xacro" />
+
+
+    <xacro:wb_arm_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot> -->

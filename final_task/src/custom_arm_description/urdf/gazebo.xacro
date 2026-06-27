@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="arm_urdf">
+
+  <!-- ROS 2 Humble / Ignition Gazebo -->
+  <gazebo>
+    <xacro:if value="$(arg is_ignition)">
+      <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <parameters>$(find custom_arm_controller)/config/arm_controllers.yaml</parameters>
+      </plugin>
+    </xacro:if>
+
+    <!-- ROS 2 Iron or above / Gazebo Sim -->
+    <xacro:unless value="$(arg is_ignition)">
+      <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <parameters>$(find custom_arm_controller)/config/arm_controllers.yaml</parameters>
+      </plugin>
+    </xacro:unless>
+  </gazebo>
+
+</robot>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="assembly_final_done_pakka">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import assembly_final_done_pakka urdf file -->
+    <xacro:include filename="$(find robo_description)/urdf/URDF_robo_bot.xacro" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="assembly_final_done_pakka.ros2_control.xacro" />
+
+
+    <xacro:assembly_final_done_pakka_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>

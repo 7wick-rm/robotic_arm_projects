@@ -1,0 +1,11 @@
+# Default initial positions for assembly_final_done_pakka's ros2_control fake system
+
+initial_positions:
+  DOF1motor_Revolute-110: 0
+  base_link_Revolute-107: 0
+  dof_5_link-1_Revolute-113: 0
+  dof_6_ass_Revolute-114: 0
+  dof_link_1_motor-1_Revolute-112: 0
+  dof_link_1_motor_Revolute-111: 0
+  gripper_withoutarm_part_Slider-116: 0
+  gripper_withoutarm_part_Slider-121: 0

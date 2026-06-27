@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="ros2_control_block">
+
+    <ros2_control name="GazeboSystem" type="system">
+
+      <!-- ros2_control Gazebo -->
+      <!-- ROS 2 Humble -->
+      <xacro:if value="$(arg is_ignition)">
+        <hardware>
+          <plugin>ign_ros2_control/IgnitionSystem</plugin>
+        </hardware>
+      </xacro:if>
+
+      <!-- ROS 2 Iron or above -->
+      <xacro:unless value="$(arg is_ignition)">
+        <hardware>
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+      </xacro:unless>
+
+      <!-- ARM -->
+
+      <!-- Joint 1: First revolute joint (base rotation) -->
+      <joint name="joint1">
+        <command_interface name="position">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <!-- Joint 2: Second revolute joint (elbow rotation) -->
+      <joint name="joint2">
+        <command_interface name="position">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <!-- Joint 3: Prismatic joint (vertical linear motion) -->
+      <joint name="joint3">
+        <command_interface name="position">
+          <param name="min">-0.00001</param>
+          <param name="max">0.3</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <!-- Wrist: Revolute joint (end-effector rotation) -->
+      <joint name="link32gripperhand">
+        <command_interface name="position">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <!-- GRIPPER -->
+
+      <!-- Left finger prismatic joint -->
+      <joint name="leftfingermove">
+        <command_interface name="position">
+          <param name="min">0.0</param>
+          <param name="max">0.08</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <!-- Right finger prismatic joint -->
+      <joint name="rightfingermove">
+        <command_interface name="position">
+          <param name="min">-0.08</param>
+          <param name="max">0.0</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+    </ros2_control>
+
+  </xacro:macro>
+
+</robot>

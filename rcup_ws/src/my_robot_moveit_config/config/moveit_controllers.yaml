@@ -1,0 +1,27 @@
+# MoveIt uses this configuration for controller management
+
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+moveit_simple_controller_manager:
+  controller_names:
+    - gripper_controller
+    - arm_controller
+
+  gripper_controller:
+    type: FollowJointTrajectory
+    joints:
+      - gripper_withoutarm_part_Slider-116
+      - gripper_withoutarm_part_Slider-121
+    action_ns: follow_joint_trajectory
+    default: true
+  arm_controller:
+    type: FollowJointTrajectory
+    joints:
+      - base_link_Revolute-107
+      - DOF1motor_Revolute-110
+      - dof_link_1_motor_Revolute-111
+      - dof_link_1_motor-1_Revolute-112
+      - dof_5_link-1_Revolute-113
+      - dof_6_ass_Revolute-114
+    action_ns: follow_joint_trajectory
+    default: true

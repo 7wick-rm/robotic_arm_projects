@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ArmPlate">
+
+
+    <xacro:arg name="left_initial_positions_file"
+            default="$(find arm_urdf_moveit_config)/config/left_initial_positions.yaml"/>
+    <xacro:arg name="right_initial_positions_file"
+            default="$(find arm_urdf_moveit_config)/config/right_initial_positions.yaml"/>
+
+    <!-- Root link -->
+    <link name="world"/>
+
+    <!-- Xacro imports -->
+    <xacro:include filename="$(find arm_urdf_moveit_config)/config/ArmPlate.xacro" />
+
+<!-- Left arm -->
+<xacro:ArmPlate
+    name="left_arm"
+    prefix="left_"
+    initial_positions_file="$(arg left_initial_positions_file)"
+    origin_xyz="0 -0.5 0"
+    origin_rpy="0 0 0"/>
+
+<!-- Right arm -->
+<xacro:ArmPlate
+    name="right_arm"
+    prefix="right_"
+    initial_positions_file="$(arg right_initial_positions_file)"
+    origin_xyz="0 0.5 0"
+    origin_rpy="0 0 0"/>
+    
+</robot>

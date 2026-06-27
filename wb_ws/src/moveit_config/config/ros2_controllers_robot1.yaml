@@ -1,0 +1,35 @@
+/robot1/controller_manager:
+  ros__parameters:
+    update_rate: 100
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+    gripper_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+/robot1/arm_controller:
+  ros__parameters:
+    joints:
+      - robot1_Link_1_joint
+      - robot1_Link_2_joint
+      - robot1_link_3_joint
+      - robot1_link_4_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: false
+
+/robot1/gripper_controller:
+  ros__parameters:
+    joints:
+      - robot1_gripper_hand_1_joint
+      - robot1_gripper_hand_2_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: false

@@ -1,0 +1,13 @@
+# Goal
+string color        
+uint8 block_id      
+float64 place_x     
+float64 place_y     
+float64 place_z     
+---
+# Result
+bool success
+string message
+---
+# Feedback
+string status

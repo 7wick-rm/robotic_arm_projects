@@ -1,0 +1,14 @@
+# ros2 build
+build/
+install/
+log/
+
+# vscode
+**/.vscode
+**/.devcontainer
+
+# mujoco log
+**/MUJOCO_LOG.TXT
+
+# ros2bag data
+rosbag2_*/

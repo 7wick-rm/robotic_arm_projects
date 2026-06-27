@@ -1,0 +1,36 @@
+<root BTCPP_format="4">
+  <BehaviorTree ID="PickAndPlacePipeline">
+
+    <Sequence name="pipeline">
+
+      <WaitForBlocks
+          expected_count="3"
+          detected_blocks="{detected_blocks}"/>
+      <CallPlanner
+          detected_blocks="{detected_blocks}"
+          goal_queue="{goal_queue}"/>
+      <ForceSuccess>
+        <Repeat num_cycles="100">
+          <Sequence name="execute_one_block">
+            <HasRemainingGoals goal_queue="{goal_queue}"/>
+            <PopNextGoal
+                goal_queue="{goal_queue}"
+                color="{color}"
+                block_id="{block_id}"
+                place_x="{place_x}"
+                place_y="{place_y}"
+                place_z="{place_z}"/>
+            <PickAndPlaceAction
+                color="{color}"
+                block_id="{block_id}"
+                place_x="{place_x}"
+                place_y="{place_y}"
+                place_z="{place_z}"/>
+          </Sequence>
+        </Repeat>
+      </ForceSuccess>
+
+    </Sequence>
+
+  </BehaviorTree>
+</root>

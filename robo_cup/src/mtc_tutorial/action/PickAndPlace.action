@@ -1,0 +1,13 @@
+# Goal — sent from CLI client
+string color        # block color to pick: "R", "G", or "B"
+uint8 block_id      # block id as published by perception
+float64 place_x     # place target x in base_link frame (metres)
+float64 place_y     # place target y in base_link frame (metres)
+float64 place_z     # place target z in base_link frame (metres)
+---
+# Result — sent once when task finishes
+bool success
+string message
+---
+# Feedback — sent continuously while task is running
+string status       # e.g. "Setting up scene", "Planning", "Executing", "Done"

@@ -1,0 +1,13 @@
+string[] block_names
+float64[] positions_x
+float64[] positions_y
+float64[] positions_z
+string[] target_names
+float64[] targets_x
+float64[] targets_y
+float64[] targets_z
+---
+# Response
+bool success
+string message
+string[] plan_actions   

@@ -1,0 +1,61 @@
+# This config file is used by ros2_control
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    left_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    left_hand_controller:
+      type: position_controllers/GripperActionController
+
+    right_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    right_hand_controller:
+      type: position_controllers/GripperActionController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+left_arm_controller:
+  ros__parameters:
+    acrion_ns: follow_joint_trajectory
+    joints:
+      - left_Base_link1-v1_Revolute-1
+      - left_2ndDOFDDD-v1_Revolute-8
+      - left_lnk1assm-v2_Revolute-9
+      - left_lnk2_assm-v2_Revolute-10
+      - left_5thDof_mnt-v2_Revolute-11
+      - left_6Thdof-v2_Revolute-12
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+left_hand_controller:
+  ros__parameters:
+    acrion_ns: gripper_cmd
+    joint: left_gripperHousing-v2_Slider-13
+
+right_arm_controller:
+  ros__parameters:
+    acrion_ns: follow_joint_trajectory
+    joints:
+      - right_Base_link1-v1_Revolute-1
+      - right_2ndDOFDDD-v1_Revolute-8
+      - right_lnk1assm-v2_Revolute-9
+      - right_lnk2_assm-v2_Revolute-10
+      - right_5thDof_mnt-v2_Revolute-11
+      - right_6Thdof-v2_Revolute-12
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+right_hand_controller:
+  ros__parameters:
+    acrion_ns: gripper_cmd
+    joint: right_gripperHousing-v2_Slider-13

@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="duplo_2x2_blue">
+    <static>false</static>
+    <link name="link">
+      <inertial>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>0.000001</ixx>
+          <iyy>0.000001</iyy>
+          <izz>0.000001</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>/home/sathwik/piper_ros2/src/piper_bringup/models/duplo_2x2_blue/meshes/2x2.stl</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>/home/sathwik/piper_ros2/src/piper_bringup/models/duplo_2x2_blue/meshes/2x2.stl</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+        
+        <material>
+          <ambient>0.0 0.2 0.8 1</ambient>
+          <diffuse>0.0 0.2 0.8 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular> </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
