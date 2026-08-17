@@ -1,0 +1,10 @@
+
+initial_positions:
+  DOF1motor_Revolute-110: 0.003
+  arm_base_joint: 0
+  dof_5_link-1_Revolute-113: 0.9
+  dof_6_ass_Revolute-114: -0.357
+  dof_link_1_motor-1_Revolute-112: -0.357
+  dof_link_1_motor_Revolute-111: -1.358
+  gripper_withoutarm_part_Slider-116: 0
+  gripper_withoutarm_part_Slider-121: 0 

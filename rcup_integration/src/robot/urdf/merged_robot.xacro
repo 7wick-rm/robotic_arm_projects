@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot
+  name="mecanum_arm_robot"
+  xmlns:xacro="http://www.ros.org/wiki/xacro"
+  xmlns:ignition="http://ignitionrobotics.org">
+
+  <xacro:property name="scale" value="0.7" />
+
+  <material name="base_chassis">
+    <color rgba="0.16 0.18 0.20 1.0" />
+  </material>
+  <material name="wheel_black">
+    <color rgba="0.05 0.05 0.06 1.0" />
+  </material>
+  <material name="accent_orange">
+    <color rgba="0.95 0.46 0.08 1.0" />
+  </material>
+  <material name="arm_light_grey">
+    <color rgba="0.82 0.83 0.85 1.0" />
+  </material>
+  <material name="gripper_dark">
+    <color rgba="0.18 0.19 0.21 1.0" />
+  </material>
+  <material name="finger_black">
+    <color rgba="0.08 0.08 0.09 1.0" />
+  </material>
+
+
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${0.11555 * scale}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <inertial>
+      <origin
+        xyz="${0.035974 * scale} ${0.020083 * scale} ${6.2148E-05 * scale}"
+        rpy="0 0 3.1415" />
+      <mass value="${6.4539 * scale**3}" />
+      <inertia
+        ixx="${0.12648 * scale**5}"
+        ixy="${-0.0035153 * scale**5}"
+        ixz="${0.00014021 * scale**5}"
+        iyy="${0.34337 * scale**5}"
+        iyz="${-3.3279E-05 * scale**5}"
+        izz="${0.25605 * scale**5}" />
+    </inertial>
+    <!-- <visual>
+      <origin xyz="0 0 0" rpy="0 0 3.1415" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/base_link.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.62745 0.62745 0.62745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/base_link.STL" />
+      </geometry>
+    </collision> -->
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 3.1415" />
+      <geometry>
+        <box size="${0.56 * scale} ${0.396 * scale} ${0.13955 * scale}" />
+      </geometry>
+      <material name="">
+        <color rgba="0.62745 0.62745 0.62745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="${0.56 * scale} ${0.396 * scale} ${0.13955 * scale}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="front_right_wheel">
+    <inertial>
+      <origin
+        xyz="${5.5722E-07 * scale} ${1.3698E-07 * scale} ${0.02407 * scale}"
+        rpy="0 0 0" />
+      <mass value="${0.18185 * scale**3}" />
+      <inertia
+        ixx="${9.3837E-05 * scale**5}"
+        ixy="${8.0211E-08 * scale**5}"
+        ixz="${-7.707E-07 * scale**5}"
+        iyy="${9.369E-05 * scale**5}"
+        iyz="${-4.1837E-07 * scale**5}"
+        izz="${0.00016398 * scale**5}" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 ${-0.05 * scale}" rpy="0 0 0" />
+      <geometry>
+        <!-- <mesh
+          filename="file://$(find robot)/meshes/front_left_wheel.STL"
+          scale="1 1 1"/> -->
+          <cylinder radius="${0.075 * scale}" length="${0.03 * scale}" />
+      </geometry>
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius="${0.075 * scale}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="front_right_wheel_joint" type="continuous">
+    <origin xyz="${0.2305 * scale} ${-0.21325 * scale} ${-0.035 * scale}" rpy="-1.5708 0 0" />
+    <parent link="base_link" />
+    <child link="front_right_wheel" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <link name="front_left_wheel">
+    <inertial>
+      <origin
+        xyz="${5.57590506100603E-07 * scale} ${1.37181806303399E-07 * scale} ${-0.0233700493804863 * scale}"
+        rpy="0 0 0" />
+      <mass value="${0.181848127423734 * scale**3}" />
+      <inertia
+        ixx="${9.38370018165505E-05 * scale**5}"
+        ixy="${8.02094351731218E-08 * scale**5}"
+        ixz="${-7.70699771255908E-07 * scale**5}"
+        iyy="${9.36898678844454E-05 * scale**5}"
+        iyz="${-4.18368785366075E-07 * scale**5}"
+        izz="${0.000163981504266464 * scale**5}" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 ${0.05 * scale}" rpy="0 0 0" />
+      <geometry>
+        <!-- <mesh
+          filename="file://$(find robot)/meshes/front_right_wheel.STL"
+          scale="1 -1 1"/> -->
+        <cylinder radius="${0.075 * scale}" length="${0.03 * scale}" />
+      </geometry>
+      <material name="">
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius="${0.075 * scale}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="front_left_wheel_joint" type="continuous">
+    <origin xyz="${0.23 * scale} ${0.21325 * scale} ${-0.035 * scale}" rpy="1.5708 0 3.1416" />
+    <parent link="base_link" />
+    <child link="front_left_wheel" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <link name="back_left_wheel">
+    <inertial>
+      <origin
+        xyz="${5.5731E-07 * scale} ${1.366E-07 * scale} ${0.02407 * scale}"
+        rpy="0 0 0" />
+      <mass value="${0.18185 * scale**3}" />
+      <inertia
+        ixx="${9.3837E-05 * scale**5}"
+        ixy="${8.0209E-08 * scale**5}"
+        ixz="${-7.707E-07 * scale**5}"
+        iyy="${9.369E-05 * scale**5}"
+        iyz="${-4.1837E-07 * scale**5}"
+        izz="${0.00016398 * scale**5}" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <!-- <mesh filename="file://$(find robot)/meshes/back_left_wheel.STL" /> -->
+        <cylinder radius="${0.075 * scale}" length="${0.03 * scale}" />
+      </geometry>
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius="${0.075 * scale}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="back_left_wheel_joint" type="continuous">
+    <origin xyz="${-0.2305 * scale} ${0.21325 * scale} ${-0.035 * scale}" rpy="1.5708 0 3.1416" />
+    <parent link="base_link" />
+    <child link="back_left_wheel" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <link name="back_right_wheel">
+    <inertial>
+      <origin
+        xyz="${5.58348600632197E-07 * scale} ${1.3626034917058E-07 * scale} ${-0.0233700496011711 * scale}"
+        rpy="0 0 0" />
+      <mass value="${0.181848128778831 * scale**3}" />
+      <inertia
+        ixx="${9.38369979810421E-05 * scale**5}"
+        ixy="${8.02094977130252E-08 * scale**5}"
+        ixz="${-7.70699508241563E-07 * scale**5}"
+        iyy="${9.36898637208611E-05 * scale**5}"
+        iyz="${-4.18369878868712E-07 * scale**5}"
+        izz="${0.00016398149673665 * scale**5}" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <!-- <mesh
+          filename="file://$(find robot)/meshes/back_right_wheel.STL"
+          scale="1 -1 1"/> -->
+        <cylinder radius="${0.075 * scale}" length="${0.03 * scale}" />
+      </geometry>
+      <material name="">
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius="${0.075 * scale}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="back_right_wheel_joint" type="continuous">
+    <origin xyz="${-0.23 * scale} ${-0.21325 * scale} ${-0.035 * scale}" rpy="-1.5708 0 0" />
+    <parent link="base_link" />
+    <child link="back_right_wheel" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <gazebo reference="front_right_wheel">
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>0.2</mu2>
+            <fdir1 ignition:expressed_in="base_footprint">1 1 0</fdir1>
+          </ode>
+        </friction>
+        <contact>
+          <ode>
+            <kp>10000000.0</kp>
+            <kd>100.0</kd>
+          </ode>
+        </contact>
+      </surface>
+    </collision>
+    <visual>
+      <material>
+        <ambient>0.2 0.2 0.2 1.0</ambient>
+        <diffuse>0.2 0.2 0.2 1.0</diffuse>
+        <specular>0.3 0.3 0.3 1.0</specular>
+        <emissive>0.0 0.0 0.0 0.0</emissive>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="front_left_wheel">
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>0.2</mu2>
+            <fdir1 ignition:expressed_in="base_footprint">1 -1 0</fdir1>
+          </ode>
+        </friction>
+        <contact>
+          <ode>
+            <kp>10000000.0</kp>
+            <kd>100.0</kd>
+          </ode>
+        </contact>
+      </surface>
+    </collision>
+    <visual>
+      <material>
+        <ambient>0.2 0.2 0.2 1.0</ambient>
+        <diffuse>0.2 0.2 0.2 1.0</diffuse>
+        <specular>0.3 0.3 0.3 1.0</specular>
+        <emissive>0.0 0.0 0.0 0.0</emissive>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="back_left_wheel">
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>0.2</mu2>
+            <fdir1 ignition:expressed_in="base_footprint">1 1 0</fdir1>
+          </ode>
+        </friction>
+        <contact>
+          <ode>
+            <kp>10000000.0</kp>
+            <kd>100.0</kd>
+          </ode>
+        </contact>
+      </surface>
+    </collision>
+    <visual>
+      <material>
+        <ambient>0.2 0.2 0.2 1.0</ambient>
+        <diffuse>0.2 0.2 0.2 1.0</diffuse>
+        <specular>0.3 0.3 0.3 1.0</specular>
+        <emissive>0.0 0.0 0.0 0.0</emissive>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="back_right_wheel">
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>0.2</mu2>
+            <fdir1 ignition:expressed_in="base_footprint">1 -1 0</fdir1>
+          </ode>
+        </friction>
+        <contact>
+          <ode>
+            <kp>10000000.0</kp>
+            <kd>100.0</kd>
+          </ode>
+        </contact>
+      </surface>
+    </collision>
+    <visual>
+      <material>
+        <ambient>0.2 0.2 0.2 1.0</ambient>
+        <diffuse>0.2 0.2 0.2 1.0</diffuse>
+        <specular>0.3 0.3 0.3 1.0</specular>
+        <emissive>0.0 0.0 0.0 0.0</emissive>
+      </material>
+    </visual>
+  </gazebo>
+
+  <link name="DOF1motor">
+    <inertial>
+      <origin xyz="${-0.0011296834324044625 * scale} ${-0.009454427380040329 * scale} ${0.1040123549451106 * scale}" rpy="0.0 -0.0 0.0" />
+      <mass value="${0.0824710826820391 * scale**3}" />
+<inertia
+  ixx="${3.47508313921151e-05 * scale**5}"
+  ixy="${1.29214179734263e-06 * scale**5}"
+  ixz="${1.16252229918454e-07 * scale**5}"
+  iyy="${3.98809753459994e-05 * scale**5}"
+  iyz="${-9.54260106687812e-09 * scale**5}"
+  izz="${4.9524730275386e-05 * scale**5}" />
+    </inertial>
+    <!-- <visual name="DOF1motor_visual">
+      <origin xyz="${-0.0011296834324044625 * scale} ${-0.009454427380040329 * scale} ${0.1040123549451106 * scale}" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${0.08 * scale}" length="${0.18 * scale}" />
+      </geometry>
+      <material name="accent_orange" />
+    </visual>
+    <collision name="DOF1motor_collision">
+      <origin xyz="${-0.0011296834324044625 * scale} ${-0.009454427380040329 * scale} ${0.1040123549451106 * scale}" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${0.08 * scale}" length="${0.18 * scale}" />
+      </geometry>
+    </collision> -->
+  </link>
+
+  <link name="dof_link_1_motor-1">
+    <inertial>
+      <origin xyz="${-0.05777179744731953 * scale} ${-0.03374564330143187 * scale} ${-0.12219784898844353 * scale}" rpy="0.0 -2.0258549168673284e-34 0.0" />
+      <mass value="${0.216229937958496 * scale**3}" />
+<inertia
+  ixx="${0.00161651358880157 * scale**5}"
+  ixy="${-4.24173421639503e-06 * scale**5}"
+  ixz="${-6.96612350971598e-05 * scale**5}"
+  iyy="${0.00163067776597064 * scale**5}"
+  iyz="${0.000128455830607639 * scale**5}"
+  izz="${0.00014743092059666 * scale**5}" />
+    </inertial>
+    <visual name="dof_link_1_motor-1_visual">
+      <origin xyz="${-0.7190772187555549 * scale} ${0.5694848363956698 * scale} ${1.3079779289910314 * scale}" rpy="2.673120081578486 0.2804237826857188 -2.0241173432816244" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/dof_link_1_motor-1.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+      <material name="accent_orange" />
+    </visual>
+    <collision name="dof_link_1_motor-1_collision">
+      <origin xyz="${-0.7190772187555549 * scale} ${0.5694848363956698 * scale} ${1.3079779289910314 * scale}" rpy="2.673120081578486 0.2804237826857188 -2.0241173432816244" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/dof_link_1_motor-1.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="dof_link_1_motor">
+    <inertial>
+      <origin xyz="${-0.03848133138437305 * scale} ${0.23095699979849893 * scale} ${-0.0023582079074941477 * scale}" rpy="0.0 -0.0 0.0" />
+      <mass value="${0.249694120964073 * scale**3}" />
+<inertia
+  ixx="${0.00381252028503523 * scale**5}"
+  ixy="${5.51191544774074e-05 * scale**5}"
+  ixz="${-4.81406703844395e-06 * scale**5}"
+  iyy="${0.000295603906582292 * scale**5}"
+  iyz="${0.000433148634179266 * scale**5}"
+  izz="${0.00372761785886154 * scale**5}" />
+    </inertial>
+    <visual name="dof_link_1_motor_visual">
+      <origin xyz="${-0.2047185869446797 * scale} ${-0.4405555684693377 * scale} ${-1.2372420023779034 * scale}" rpy="-1.6601718270849009 -0.2505334442513382 0.15828950161086536" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/dof_link_1_motor.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+      <material name="arm_light_grey" />
+    </visual>
+    <collision name="dof_link_1_motor_collision">
+      <origin xyz="${-0.2047185869446797 * scale} ${-0.4405555684693377 * scale} ${-1.2372420023779034 * scale}" rpy="-1.6601718270849009 -0.2505334442513382 0.15828950161086536" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/dof_link_1_motor.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="dof_5_link-1">
+    <inertial>
+      <origin xyz="${-0.02467512507329877 * scale} ${-0.020367001112218616 * scale} ${0.012760552553552174 * scale}" rpy="0.0 -5.551115123125783e-17 -2.7755575615628914e-17" />
+     <mass value="${0.103078861981804 * scale**3}" />
+<inertia
+  ixx="${0.000119207078442535 * scale**5}"
+  ixy="${8.78722767309915e-06 * scale**5}"
+  ixz="${-1.87512025476334e-05 * scale**5}"
+  iyy="${0.000142933493161406 * scale**5}"
+  iyz="${4.84495707730138e-06 * scale**5}"
+  izz="${6.93075856193788e-05 * scale**5}" />
+    </inertial>
+    <visual name="dof_5_link-1_visual">
+      <origin xyz="${1.2223486461835815 * scale} ${1.29402131861152 * scale} ${0.4097878187880326 * scale}" rpy="0.8138706323121858 0.0237202981387764 -1.2196186841128727" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/dof_5_link-1.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+      <material name="arm_light_grey" />
+    </visual>
+    <collision name="dof_5_link-1_collision">
+      <origin xyz="${1.2223486461835815 * scale} ${1.29402131861152 * scale} ${0.4097878187880326 * scale}" rpy="0.8138706323121858 0.0237202981387764 -1.2196186841128727" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/dof_5_link-1.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="dof_6_ass">
+    <inertial>
+      <origin xyz="${-0.02276629872372837 * scale} ${0.021384302596814033 * scale} ${-0.00311001217661655 * scale}" rpy="0.0 5.551115123125783e-17 0.0" />
+     <mass value="${0.114390061694423 * scale**3}" />
+<inertia
+  ixx="${0.000129909710930519 * scale**5}"
+  ixy="${-2.38444755478783e-06 * scale**5}"
+  ixz="${-4.38703780368475e-06 * scale**5}"
+  iyy="${0.000122878438001595 * scale**5}"
+  iyz="${2.23427622957893e-07 * scale**5}"
+  izz="${4.2874695272114e-05 * scale**5}" />
+    </inertial>
+    <visual name="dof_6_ass_visual">
+      <origin xyz="${0.7389398470651074 * scale} ${-1.2219420980030036 * scale} ${-1.1924321447477728 * scale}" rpy="-1.3464068133368718 0.3134488034064052 1.7178125554631054" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/dof_6_ass.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+      <material name="accent_orange" />
+    </visual>
+    <collision name="dof_6_ass_collision">
+      <origin xyz="${0.7389398470651074 * scale} ${-1.2219420980030036 * scale} ${-1.1924321447477728 * scale}" rpy="-1.3464068133368718 0.3134488034064052 1.7178125554631054" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/dof_6_ass.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="gripper_withoutarm_part">
+    <inertial>
+      <origin xyz="${-0.0004210931278095842 * scale} ${-0.010676101626814757 * scale} ${0.04490896794179776 * scale}" rpy="0.0 -0.0 0.0" />
+      <mass value="${0.113556063120094 * scale**3}" />
+<inertia
+  ixx="${8.16096029444656e-05 * scale**5}"
+  ixy="${-1.19238106714437e-05 * scale**5}"
+  ixz="${1.03581727875417e-06 * scale**5}"
+  iyy="${0.000116280894230888 * scale**5}"
+  iyz="${-3.35304758858461e-06 * scale**5}"
+  izz="${9.44461734001591e-05 * scale**5}" />
+    </inertial>
+    <visual name="gripper_withoutarm_part_visual">
+      <origin xyz="${0.5438701651428964 * scale} ${-0.8805378344907026 * scale} ${-1.597920850492956 * scale}" rpy="-0.31654018667567163 -0.5133655835055568 -2.7649702565721177" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/gripper_withoutarm_part.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+      <material name="gripper_dark" />
+    </visual>
+    <collision name="gripper_withoutarm_part_collision">
+      <origin xyz="${0.5438701651428964 * scale} ${-0.8805378344907026 * scale} ${-1.597920850492956 * scale}" rpy="-0.31654018667567163 -0.5133655835055568 -2.7649702565721177" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/gripper_withoutarm_part.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="gripper_hard_assembly">
+    <inertial>
+      <origin xyz="${0.019572627741546285 * scale} ${-0.005124649129952275 * scale} ${0.04183600458155013 * scale}" rpy="0.0 -0.0 0.0" />
+      <mass value="${0.0551592913995871 * scale**3}" />
+<inertia
+  ixx="${4.03179767489813e-05 * scale**5}"
+  ixy="${1.03222757944055e-06 * scale**5}"
+  ixz="${-9.14082151872735e-06 * scale**5}"
+  iyy="${4.94132223100866e-05 * scale**5}"
+  iyz="${2.90811301205954e-06 * scale**5}"
+  izz="${2.23158510147405e-05 * scale**5}" />
+    </inertial>
+    <visual name="gripper_hard_assembly_visual">
+      <origin xyz="${1.089925859866381 * scale} ${-0.18737715608703645 * scale} ${-1.4189470299843714 * scale}" rpy="-0.3165401866756091 -0.5133655835055873 -1.495205519247795" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/gripper_hard_assembly.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+      <material name="finger_black" />
+    </visual>
+    <collision name="gripper_hard_assembly_collision">
+      <origin xyz="${1.089925859866381 * scale} ${-0.18737715608703645 * scale} ${-1.4189470299843714 * scale}" rpy="-0.3165401866756091 -0.5133655835055873 -1.495205519247795" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/gripper_hard_assembly.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="gripper_hard_assembly-1">
+    <inertial>
+      <origin xyz="${0.0034099020545592398 * scale} ${0.015230220870018787 * scale} ${0.04418941460867714 * scale}" rpy="-1.1102230246251565e-16 -0.0 5.551115123125783e-17" />
+     <mass value="${0.0551592333435095 * scale**3}" />
+<inertia
+  ixx="${4.0317821570716e-05 * scale**5}"
+  ixy="${1.03222926041441e-06 * scale**5}"
+  ixz="${-9.14087859356459e-06 * scale**5}"
+  iyy="${4.94130448813376e-05 * scale**5}"
+  iyz="${2.90811628212591e-06 * scale**5}"
+  izz="${2.23158212484793e-05 * scale**5}" />
+    </inertial>
+    <visual name="gripper_hard_assembly-1_visual">
+      <origin xyz="${1.4399676663177154 * scale} ${-0.41993830400152293 * scale} ${-0.9852226684679889 * scale}" rpy="0.04593787027968751 -0.7081599064166834 -1.7056115648680013" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/gripper_hard_assembly-1.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+      <material name="finger_black" />
+    </visual>
+    <collision name="gripper_hard_assembly-1_collision">
+      <origin xyz="${1.4399676663177154 * scale} ${-0.41993830400152293 * scale} ${-0.9852226684679889 * scale}" rpy="0.04593787027968751 -0.7081599064166834 -1.7056115648680013" />
+      <geometry>
+        <mesh filename="file://$(find robot)/meshes/gripper_hard_assembly-1.stl" scale="${0.001 * scale} ${0.001 * scale} ${0.001 * scale}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="tcp" />
+
+  <joint name="arm_base_joint" type="revolute">
+    <origin xyz="${0.18 * scale} 0.0 ${0.12 * scale}" rpy="0.0 0.0 0.0" />
+    <parent link="base_link" />
+    <child link="DOF1motor" />
+    <axis xyz="0.0 0.0 1.0" />
+    <limit lower="-3.14159" upper="3.14159" effort="100.0" velocity="1.0" />
+  </joint>
+
+  <joint name="DOF1motor_Revolute-110" type="revolute">
+    <origin xyz="${0.05977401 * scale} ${-0.04506830999999991 * scale} ${0.13783788000000002 * scale}" rpy="1.5707963267948966 3.3090002558945606e-33 -1.6476562238964763" />
+    <parent link="DOF1motor" />
+    <child link="dof_link_1_motor" />
+    <axis xyz="-0.5389434964691182 -4.7491871963111094e-31 0.8423421895546024" />
+    <limit lower="-3.14159" upper="3.14159" effort="100.0" velocity="1.0" />
+  </joint>
+
+  <joint name="dof_link_1_motor_Revolute-111" type="revolute">
+    <origin xyz="${-0.10999745661693325 * scale} ${0.34127888 * scale} ${0.07813641131438707 * scale}" rpy="2.2889582412345407e-18 -1.335872757484382 -3.141592653589793" />
+    <parent link="dof_link_1_motor" />
+    <child link="dof_link_1_motor-1" />
+    <axis xyz="0.944654000610263 4.1774292358631725e-18 -0.32806901075996997" />
+    <limit lower="-3.14159" upper="3.14159" effort="100.0" velocity="1.0" />
+  </joint>
+
+  <joint name="dof_link_1_motor-1_Revolute-112" type="revolute">
+    <origin xyz="${-0.11848652546001333 * scale} ${-0.06685264000000003 * scale} ${-0.24363373549902576 * scale}" rpy="1.5707963267948848 -0.3896407340018747 -0.6683100183905701" />
+    <parent link="dof_link_1_motor-1" />
+    <child link="dof_5_link-1" />
+    <axis xyz="-0.44704673156934605 -0.8095221536506211 0.38055695263524614" />
+    <limit lower="-3.14159" upper="3.14159" effort="100.0" velocity="1.0" />
+  </joint>
+
+  <joint name="dof_5_link-1_Revolute-113" type="revolute">
+    <origin xyz="${0.034512173364774 * scale} ${-0.06572872345445717 * scale} ${0.010750133766153738 * scale}" rpy="1.5944708608255445 1.2328184157277498 -1.2861963581525255" />
+    <parent link="dof_5_link-1" />
+    <child link="dof_6_ass" />
+    <axis xyz="0.3167305964018932 0.646302264433312 -0.6942440863552778" />
+    <limit lower="-3.14159" upper="3.14159" effort="100.0" velocity="1.0" />
+  </joint>
+
+  <joint name="dof_6_ass_Revolute-114" type="revolute">
+    <origin xyz="${-0.05945510856459379 * scale} ${0.05645176399522061 * scale} ${0.011024456077809646 * scale}" rpy="-1.5672044138347252 1.2557563654514987 1.1630226198758777" />
+    <parent link="dof_6_ass" />
+    <child link="gripper_withoutarm_part" />
+    <axis xyz="-0.05256099987005025 -0.16789987204517345 0.9844013041640461" />
+    <limit lower="-3.14159" upper="3.14159" effort="100.0" velocity="1.0" />
+  </joint>
+
+  <joint name="gripper_withoutarm_part_Slider-116" type="prismatic">
+    <origin xyz="${0.0304875523094762 * scale} ${0.02539164724380683 * scale} ${0.07402027467593143 * scale}" rpy="4.9960036108132044e-15 1.2156942119645464e-14 -1.2697647373243608" />
+    <parent link="gripper_withoutarm_part" />
+    <child link="gripper_hard_assembly" />
+    <axis xyz="-0.27202919874188347 0.9525230345616144 0.13674683847308294" />
+    <limit lower="${-0.05 * scale}" upper="${0.05 * scale}" effort="${500.0*scale*scale}" velocity="${0.1*scale}" />
+  </joint>
+
+  <joint name="gripper_withoutarm_part_Slider-121" type="prismatic">
+    <origin xyz="${-0.03753071271899827 * scale} ${-0.04789018889186679 * scale} ${0.057889567445527916 * scale}" rpy="-4.884981308350688e-15 7.049916206369744e-15 1.8718279162654288" />
+    <parent link="gripper_withoutarm_part" />
+    <child link="gripper_hard_assembly-1" />
+    <axis xyz="-0.27202919874188447 0.9525230345616131 -0.13674683847308317" />
+    <limit lower="${-0.05 * scale}" upper="${0.05 * scale}" effort="${500.0*scale*scale}" velocity="${0.1*scale}" />
+  </joint>
+
+  <joint name="tcp_joint" type="fixed">
+    <parent link="gripper_withoutarm_part" />
+    <child link="tcp" />
+    <origin xyz="${-0.02 * scale} ${-0.02 * scale} ${0.08 * scale}" rpy="0.119 0.051 -1.00076" />
+  </joint>
+
+<link name="counterweight">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="${2.3417 * scale**3}"/>
+    <inertia
+      ixx="${0.01 * scale**5}" ixy="0" ixz="0"
+      iyy="${0.01 * scale**5}" iyz="0"
+      izz="${0.01 * scale**5}"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${0.1 * scale} ${0.1 * scale} ${0.05 * scale}"/>
+    </geometry>
+  </visual>
+</link>
+
+<joint name="counterweight_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="counterweight"/>
+  <origin xyz="${-0.18 * scale} ${-0.0255 * scale} ${0.05 * scale}" rpy="0 0 0"/>
+</joint>
+
+  <gazebo reference="gripper_hard_assembly">
+    <gravity>false</gravity>
+  </gazebo>
+
+  <gazebo reference="gripper_hard_assembly-1">
+    <gravity>false</gravity>
+  </gazebo>
+
+  <gazebo reference="gripper_withoutarm_part">
+    <gravity>false</gravity>
+  </gazebo>
+
+</robot>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

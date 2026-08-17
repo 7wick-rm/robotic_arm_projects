@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="mecanum_arm_robot_ros2_control" params="name initial_positions_file">
+        <xacro:property name="initial_positions" value="${load_yaml(initial_positions_file)['initial_positions']}"/>
+
+        <ros2_control name="${name}" type="system">
+            <hardware>
+                <!-- By default, set up controllers for simulation. This won't work on real hardware -->
+                <plugin>ign_ros2_control/IgnitionSystem</plugin>
+                <!-- <plugin>mock_components/GenericSystem</plugin> -->
+            </hardware>
+            <joint name="gripper_withoutarm_part_Slider-116">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['gripper_withoutarm_part_Slider-116']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="gripper_withoutarm_part_Slider-121">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['gripper_withoutarm_part_Slider-121']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="arm_base_joint">
+                <command_interface name="position">
+                    <param name="min">-3.14159</param>
+                    <param name="max">3.14159</param>
+                </command_interface>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['arm_base_joint']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="DOF1motor_Revolute-110">
+                <command_interface name="position">
+                    <param name="min">-3.14159</param>
+                    <param name="max">3.14159</param>
+                </command_interface>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['DOF1motor_Revolute-110']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="dof_link_1_motor_Revolute-111">
+                <command_interface name="position">
+                    <param name="min">-3.14159</param>
+                    <param name="max">3.14159</param>
+                </command_interface>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['dof_link_1_motor_Revolute-111']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="dof_link_1_motor-1_Revolute-112">
+                <command_interface name="position">
+                    <param name="min">-3.14159</param>
+                    <param name="max">3.14159</param>
+                </command_interface>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['dof_link_1_motor-1_Revolute-112']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="dof_5_link-1_Revolute-113">
+                <command_interface name="position">
+                    <param name="min">-3.14159</param>
+                    <param name="max">3.14159</param>
+                </command_interface>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['dof_5_link-1_Revolute-113']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="dof_6_ass_Revolute-114">
+                <command_interface name="position">
+                    <param name="min">-3.14159</param>
+                    <param name="max">3.14159</param>
+                </command_interface>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['dof_6_ass_Revolute-114']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+
+
+            <!-- WHEELS — passive, no command interface, just state -->
+            <!-- <joint name="base_link_Revolute-105">
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+            </joint>
+
+            <joint name="base_link_Revolute-118">
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+            </joint>
+
+            <joint name="base_link_Revolute-119">
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+            </joint>
+
+            <joint name="base_link_Revolute-120">
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+            </joint> -->
+
+        </ros2_control>
+    </xacro:macro>
+</robot>
