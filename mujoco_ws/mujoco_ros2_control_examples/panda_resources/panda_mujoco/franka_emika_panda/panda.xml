@@ -114,89 +114,9 @@
     <mesh file="finger_0.obj"/>
     <mesh file="finger_1.obj"/>
 
+    <mesh name="lego_block1"       file="2x2.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="lego_block2"       file="4x2.stl" scale="0.001 0.001 0.001"/>
     <!-- Meshes for the hole -->
-    <mesh file="geometry_0.stl"/>
-    <mesh file="geometry_1.stl"/>
-    <mesh file="geometry_2.stl"/>
-    <mesh file="geometry_3.stl"/>
-    <mesh file="geometry_4.stl"/>
-    <mesh file="geometry_5.stl"/>
-    <mesh file="geometry_6.stl"/>
-    <mesh file="geometry_7.stl"/>
-    <mesh file="geometry_8.stl"/>
-    <mesh file="geometry_9.stl"/>
-    <mesh file="geometry_10.stl"/>
-    <mesh file="geometry_11.stl"/>
-    <mesh file="geometry_12.stl"/>
-    <mesh file="geometry_13.stl"/>
-    <mesh file="geometry_14.stl"/>
-    <mesh file="geometry_15.stl"/>
-    <mesh file="geometry_16.stl"/>
-    <mesh file="geometry_17.stl"/>
-    <mesh file="geometry_18.stl"/>
-    <mesh file="geometry_19.stl"/>
-    <mesh file="geometry_20.stl"/>
-    <mesh file="geometry_21.stl"/>
-    <mesh file="geometry_22.stl"/>
-    <mesh file="geometry_23.stl"/>
-    <mesh file="geometry_24.stl"/>
-    <mesh file="geometry_25.stl"/>
-    <mesh file="geometry_26.stl"/>
-    <mesh file="geometry_27.stl"/>
-    <mesh file="geometry_28.stl"/>
-    <mesh file="geometry_29.stl"/>
-    <mesh file="geometry_30.stl"/>
-    <mesh file="geometry_31.stl"/>
-    <mesh file="geometry_32.stl"/>
-    <mesh file="geometry_33.stl"/>
-    <mesh file="geometry_34.stl"/>
-    <mesh file="geometry_35.stl"/>
-    <mesh file="geometry_36.stl"/>
-    <mesh file="geometry_37.stl"/>
-    <mesh file="geometry_38.stl"/>
-    <mesh file="geometry_39.stl"/>
-    <mesh file="geometry_40.stl"/>
-    <mesh file="geometry_41.stl"/>
-    <mesh file="geometry_42.stl"/>
-    <mesh file="geometry_43.stl"/>
-    <mesh file="geometry_44.stl"/>
-    <mesh file="geometry_45.stl"/>
-    <mesh file="geometry_46.stl"/>
-    <mesh file="geometry_47.stl"/>
-    <mesh file="geometry_48.stl"/>
-    <mesh file="geometry_49.stl"/>
-    <mesh file="geometry_50.stl"/>
-    <mesh file="geometry_51.stl"/>
-    <mesh file="geometry_52.stl"/>
-    <mesh file="geometry_53.stl"/>
-    <mesh file="geometry_54.stl"/>
-    <mesh file="geometry_55.stl"/>
-    <mesh file="geometry_56.stl"/>
-    <mesh file="geometry_57.stl"/>
-    <mesh file="geometry_58.stl"/>
-    <mesh file="geometry_59.stl"/>
-    <mesh file="geometry_60.stl"/>
-    <mesh file="geometry_61.stl"/>
-    <mesh file="geometry_62.stl"/>
-    <mesh file="geometry_63.stl"/>
-    <mesh file="geometry_64.stl"/>
-    <mesh file="geometry_65.stl"/>
-    <mesh file="geometry_66.stl"/>
-    <mesh file="geometry_67.stl"/>
-    <mesh file="geometry_68.stl"/>
-    <mesh file="geometry_69.stl"/>
-    <mesh file="geometry_70.stl"/>
-    <mesh file="geometry_71.stl"/>
-    <mesh file="geometry_72.stl"/>
-    <mesh file="geometry_73.stl"/>
-    <mesh file="geometry_74.stl"/>
-    <mesh file="geometry_75.stl"/>
-    <mesh file="geometry_76.stl"/>
-    <mesh file="geometry_77.stl"/>
-    <mesh file="geometry_78.stl"/>
-    <mesh file="geometry_79.stl"/>
-
-    <mesh file="bevel_peg.stl"/>
   </asset>
 
   <worldbody>
@@ -300,10 +220,6 @@
                       <geom mesh="hand_3" material="white" class="visual"/>
                       <geom mesh="hand_4" material="off_white" class="visual"/>
                       <geom mesh="hand_c" class="collision"/>
-                      <body name="peg" pos="0.0 0 0.115">
-                        <geom type="mesh" mesh="bevel_peg" quat="0 1 0 0" rgba="0 1 0 1"/>
-                        <inertial pos="0 0 0" mass="0.1" diaginertia="0.1 0.1 0.1" />
-                      </body>
                       <body name="left_finger" pos="0 0 0.0584">
                         <inertial mass="0.015" pos="0 0 0" diaginertia="2.375e-6 2.375e-6 7.5e-7"/>
                         <joint name="panda_finger_joint1" class="finger"/>
@@ -336,88 +252,6 @@
           </body>
         </body>
       </body>
-    </body>
-    <body name="hole" pos="0.5 0. 0.01">
-      <geom type="mesh" mesh="geometry_0"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_1"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_2"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_3"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_4"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_5"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_6"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_7"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_8"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_9"  rgba="1 0 0 1"/>
-      <geom type="mesh" mesh="geometry_10" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_11" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_12" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_13" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_14" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_15" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_16" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_17" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_18" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_19" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_20" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_21" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_22" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_23" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_24" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_25" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_26" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_27" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_28" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_29" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_30" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_31" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_32" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_33" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_34" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_35" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_36" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_37" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_38" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_39" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_40" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_41" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_42" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_43" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_44" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_45" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_46" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_47" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_48" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_49" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_50" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_51" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_52" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_53" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_54" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_55" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_56" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_57" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_58" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_59" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_60" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_61" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_62" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_63" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_64" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_65" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_66" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_67" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_68" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_69" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_70" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_71" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_72" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_73" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_74" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_75" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_76" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_77" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_78" rgba="1 0 0 1" />
-      <geom type="mesh" mesh="geometry_79" rgba="1 0 0 1" />
     </body>
   </worldbody>
 

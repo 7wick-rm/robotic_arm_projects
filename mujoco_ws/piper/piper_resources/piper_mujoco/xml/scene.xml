@@ -1,0 +1,101 @@
+<!--
+  scene.xml  —  Piper pick-and-place MuJoCo scene
+  Key tuning for stable grasping:
+    1. timestep=0.001 s (1 kHz) in <option> — finer steps prevent the
+       impulsive force spike when fingers close against the block.
+    2. Object: condim=6 (full 6-DOF friction), high friction coefficients,
+       stiff contact (solimp/solref).
+    3. Finger geoms: same stiff contact params so grip force transfers cleanly.
+-->
+<mujoco model="piper_scene">
+
+  <include file="piper.xml"/>
+
+  <!-- ── Camera / statistics ─────────────────────────────────────────── -->
+  <statistic center="0.3 0 0.4" extent="1"/>
+
+  <!-- ── Lighting and sky ────────────────────────────────────────────── -->
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="120" elevation="-20"/>
+  </visual>
+
+<!-- ── Textures and materials ──────────────────────────────────────── -->
+<asset>
+  <material name="object_mat" rgba="0.8 0.3 0.1 1"/>
+</asset>
+  <!--
+    ── Physics solver options ──────────────────────────────────────────
+    timestep=0.001: half the default — prevents large impulse spikes
+                    when the gripper closes against the block.
+  -->
+  <option timestep="0.0005"
+          gravity="0 0 -9.81">
+    <flag contact="enable"/>
+  </option>
+
+  <!-- ── World bodies ────────────────────────────────────────────────── -->
+  <worldbody>
+    <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
+    <!--
+      Pick target block
+      ─────────────────
+      Position:   x=0.25  y=-0.25  z=0.025 — must match setupPlanningScene() in mtc.cpp.
+
+      condim=6:   full 6-DOF friction (sliding + torsional + rolling).
+                  This is essential — condim=3 or 4 lets the block spin/slide out.
+      friction:   "1.5 0.05 0.005"
+                    1.5  = sliding friction coefficient (high = good grip)
+                    0.05 = torsional friction (resists spinning about contact normal)
+                    0.005= rolling friction
+      solimp:     "0.98 0.99 0.001 0.5 2"
+                  Near-rigid contact, 1 mm penetration tolerance.
+      solref:     "0.004 1" — contact time constant 4 ms (very stiff/fast).
+                  This must be >= 2*timestep to stay stable.
+    -->
+    <body name="object1" pos="0.25 -0.25 0.025">
+      <freejoint name="object_joint1"/>
+      <!--
+        type="mesh" uses the STL for both visual and collision.
+        MuJoCo auto-computes a convex hull for collision from the mesh.
+      -->
+      <geom name="object_geom1"
+            type="mesh"
+            rgba="0.0 0.7 0.2 1"
+            mesh="lego_block1"
+            mass="0.02"
+            condim="6"
+            friction="1.0 0.01 0.001"
+            solimp="0.9 0.95 0.001 0.5 2"
+            solref="0.004 1"/>
+    </body>
+
+    <!-- <body name="object2" pos="0.25 0.0 0.025">
+      <freejoint name="object_joint2"/>
+      <geom name="object_geom2"
+            type="mesh"
+            mesh="lego_block2"
+            rgba="0.9 0.8 0.0 1"
+            mass="0.02"
+            condim="6"
+            friction="1.0 0.01 0.001"
+            solimp="0.9 0.95 0.001 0.5 2"
+            solref="0.004 1"/>
+    </body> -->
+<body name="cylinder" pos="0.45 0.0 0.06">
+  <freejoint/>
+  <geom
+    type="box"
+    size="0.0159 0.0159 0.06"
+    mass="0.5"
+    rgba="0 0 1 1"
+    friction="1.5 0.05 0.05"
+    condim="3"
+    solref="0.001 1"
+    solimp="0.70 0.80 0.4 0.2 2"/>
+</body>
+
+  </worldbody>
+
+</mujoco>

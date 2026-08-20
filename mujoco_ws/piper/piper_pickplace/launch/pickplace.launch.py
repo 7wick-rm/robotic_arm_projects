@@ -5,12 +5,12 @@ import os
 
 def generate_launch_description():
 
-    BASE             = "/home/sathwik/mujoco_ws/piper/piper_resources"
+    BASE             = "/home/sathwik/robotic_arm_projects/mujoco_ws/piper/piper_resources"
     piper_desc_dir   = os.path.join(BASE, "piper_description")
     piper_moveit_dir = os.path.join(BASE, "piper_moveit_config")
 
-    urdf_xacro      = os.path.join(piper_desc_dir,   "urdf",   "piper.urdf.xacro")
-    srdf_file       = os.path.join(piper_moveit_dir, "config", "piper.srdf.xacro")
+    urdf_xacro      = os.path.join(piper_desc_dir,   "urdf",   "piper.urdf")
+    srdf_file       = os.path.join(piper_moveit_dir, "config", "piper_description.srdf")
     kinematics_yaml = os.path.join(piper_moveit_dir, "config", "kinematics.yaml")
     moveit_ctrl_yaml= os.path.join(piper_moveit_dir, "config", "moveit_controllers.yaml")
     joint_limits_yaml = os.path.join(piper_moveit_dir, "config", "joint_limits.yaml")

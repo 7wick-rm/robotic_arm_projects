@@ -42,18 +42,18 @@ namespace mtc = moveit::task_constructor;
 // ─────────────────────────────────────────────────────────────────────────────
 
 // MoveIt planning group names (must match piper.srdf)
-static constexpr char ARM_GROUP[]  = "manipulator";
+static constexpr char ARM_GROUP[]  = "arm";
 static constexpr char HAND_GROUP[] = "gripper";
 
 // The tool-centre-point frame (tip of the arm, used for IK)
-static constexpr char HAND_FRAME[] = "tool_0";
+static constexpr char HAND_FRAME[] = "link6";
 
 // End-effector name as declared in the SRDF <end_effector> tag
-static constexpr char EEF_NAME[]   = "eff";
+static constexpr char EEF_NAME[]   = "eef";
 
 // Named gripper states defined in the SRDF
 static constexpr char GRIPPER_OPEN[]   = "open";
-static constexpr char GRIPPER_CLOSED[] = "closed";
+static constexpr char GRIPPER_CLOSED[] = "close";
 
 // Named arm pose to return to after placing (must exist in SRDF)
 static constexpr char HOME_POSE[] = "home";
@@ -102,29 +102,17 @@ void MTCTaskNode::setupPlanningScene()
 {
   moveit_msgs::msg::CollisionObject object;
   object.id = "object";
-  object.header.frame_id = "base_link";
+  object.header.frame_id = "world";
+  object.primitives.resize(1);
+  object.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
+  object.primitives[0].dimensions = { 0.0159,0.0159,0.06 };
 
-  // Load mesh from STL file
-  shapes::Mesh* mesh = shapes::createMeshFromResource(
-      "file:///home/sathwik/mujoco_ws/piper/piper_resources/piper_mujoco/the_piper/2x2.stl", // For adding custom shapes using .stl files
-      Eigen::Vector3d(0.001, 0.001, 0.001)); // For scaling
-
-  // constructMsgFromShape takes a ShapeMsg (boost::variant), not a Mesh directly
-  shapes::ShapeMsg shape_msg;
-  shapes::constructMsgFromShape(mesh, shape_msg);
-
-  // Extract the Mesh from the variant
-  shape_msgs::msg::Mesh mesh_msg = boost::get<shape_msgs::msg::Mesh>(shape_msg);
-
-  delete mesh;  // free the heap-allocated mesh
-
-  object.meshes.resize(1);
-  object.meshes[0] = mesh_msg;
-  object.mesh_poses.resize(1);
-  object.mesh_poses[0].position.x    =  0.25;
-  object.mesh_poses[0].position.y    =  0.0;
-  object.mesh_poses[0].position.z    =  0.012;
-  object.mesh_poses[0].orientation.w =  1.0;
+  geometry_msgs::msg::Pose pose;
+  pose.position.x = 0.25;
+  pose.position.y = 0.0;
+  pose.position.z=0.06;
+  pose.orientation.w = 1.0;
+  object.pose = pose;
 
   moveit::planning_interface::PlanningSceneInterface psi;
   psi.applyCollisionObject(object);
@@ -178,6 +166,9 @@ mtc::Task MTCTaskNode::createTask()
   // cartesian_planner : straight-line Cartesian paths, used for lift / retreat
   auto sampling_planner     = std::make_shared<mtc::solvers::PipelinePlanner>(node_);
   auto interpolation_planner= std::make_shared<mtc::solvers::JointInterpolationPlanner>();
+  auto interpolation_slow=std::make_shared<mtc::solvers::JointInterpolationPlanner>();
+  interpolation_slow->setMaxAccelerationScalingFactor(0.05);
+  interpolation_slow->setMaxVelocityScalingFactor(0.05);
 
   auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
   cartesian_planner->setMaxVelocityScalingFactor(0.1);
@@ -233,16 +224,24 @@ mtc::Task MTCTaskNode::createTask()
       grasp_generator->setObject(OBJECT_ID);
       grasp_generator->setPreGraspPose(GRIPPER_OPEN);
       // Sample grasp angles every 45° around the object's vertical axis
-      grasp_generator->setAngleDelta(M_PI / 4);
+      grasp_generator->setAngleDelta(M_PI / 2);
       grasp_generator->setMonitoredStage(current_state_ptr);
 
       // Transform from tool_0 to the actual grasp contact point.
       // 0.13 m along Z = gripper finger length offset.
       // 180° around X = flip so fingers point downward toward the object.
-      Eigen::Isometry3d grasp_frame_transform = Eigen::Isometry3d::Identity();
-      grasp_frame_transform.translation().z() = 0.13;
-      grasp_frame_transform.linear() =
-          Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()).toRotationMatrix();
+      // Eigen::Isometry3d grasp_frame_transform = Eigen::Isometry3d::Identity();
+      // grasp_frame_transform.translation().z() = 0.11;
+      // grasp_frame_transform.linear() =
+      //     Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()).toRotationMatrix();
+
+      Eigen::Isometry3d grasp_frame_transform;
+      Eigen::Quaterniond q = Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitX()) *
+                          Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitY()) *
+                          Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitZ());
+      grasp_frame_transform.linear() = q.matrix();
+      grasp_frame_transform.translation().x()=-0.20;
+      grasp_frame_transform.translation().z()=0.09;
 
       // Stage 4b: solve IK for each candidate grasp pose
       auto ik_wrapper = std::make_unique<mtc::stages::ComputeIK>(
@@ -271,7 +270,7 @@ mtc::Task MTCTaskNode::createTask()
 
     // Stage 6: close the gripper
     {
-      auto stage = std::make_unique<mtc::stages::MoveTo>("close gripper", interpolation_planner);
+      auto stage = std::make_unique<mtc::stages::MoveTo>("close gripper", interpolation_slow);
       stage->setGroup(HAND_GROUP);
       stage->setGoal(GRIPPER_CLOSED);
       pick->insert(std::move(stage));

@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:macro name="piper_description_ros2_control" params="name initial_positions_file use_mujoco:=false mujoco_model_path:=''">
+<xacro:property name="initial_positions" value="${load_yaml(initial_positions_file)['initial_positions']}"/>
+
+<ros2_control name="${name}" type="system">
+<hardware>
+<xacro:if value="${use_mujoco}">
+  <plugin>mujoco_ros2_control/MujocoSystem</plugin>
+  <param name="mujoco_model">${mujoco_model_path}</param>
+</xacro:if>
+<xacro:unless value="${use_mujoco}">
+  <!-- By default, set up controllers for simulation. This won't work on real hardware -->
+  <plugin>mock_components/GenericSystem</plugin>
+</xacro:unless>
+</hardware>
+<joint name="joint1">
+<command_interface name="position"/>
+<state_interface name="position">
+<param name="initial_value">${initial_positions['joint1']}</param>
+</state_interface>
+<state_interface name="velocity"/>
+</joint>
+<joint name="joint2">
+<command_interface name="position"/>
+<state_interface name="position">
+<param name="initial_value">${initial_positions['joint2']}</param>
+</state_interface>
+<state_interface name="velocity"/>
+</joint>
+<joint name="joint3">
+<command_interface name="position"/>
+<state_interface name="position">
+<param name="initial_value">${initial_positions['joint3']}</param>
+</state_interface>
+<state_interface name="velocity"/>
+</joint>
+<joint name="joint4">
+<command_interface name="position"/>
+<state_interface name="position">
+<param name="initial_value">${initial_positions['joint4']}</param>
+</state_interface>
+<state_interface name="velocity"/>
+</joint>
+<joint name="joint5">
+<command_interface name="position"/>
+<state_interface name="position">
+<param name="initial_value">${initial_positions['joint5']}</param>
+</state_interface>
+<state_interface name="velocity"/>
+</joint>
+<joint name="joint6">
+<command_interface name="position"/>
+<state_interface name="position">
+<param name="initial_value">${initial_positions['joint6']}</param>
+</state_interface>
+<state_interface name="velocity"/>
+</joint>
+<joint name="joint7">
+<command_interface name="position"/>
+<state_interface name="position">
+<param name="initial_value">${initial_positions['joint7']}</param>
+</state_interface>
+<state_interface name="velocity"/>
+</joint>
+<joint name="joint8">
+<command_interface name="position"/>
+<state_interface name="position">
+<param name="initial_value">${initial_positions['joint7']}</param>
+</state_interface>
+<state_interface name="velocity"/>
+</joint>
+</ros2_control>
+</xacro:macro>
+</robot>

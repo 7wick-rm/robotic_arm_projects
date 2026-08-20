@@ -1,57 +1,79 @@
 """
 mujoco_piper.launch.py
+
+Brings up:
+  - MuJoCo physics as the ros2_control hardware backend
+  - move_group (MoveIt planning)
+  - RViz with the MotionPlanning plugin (drag-able interactive markers)
+  - controller spawners, sequenced to start only once MuJoCo's
+    controller_manager is actually up
+
+Prereqs before running:
+  1. Confirm the real executable name for your installed mujoco_ros2_control:
+       ros2 pkg executables mujoco_ros2_control
+     Update MUJOCO_CONTROL_EXECUTABLE below if it isn't "ros2_control_node".
+
+  2. Confirm the include filename in piper.urdf.xacro matches the actual
+     file on disk exactly (piper_description.ros2_control.xacro vs whatever
+     you actually named it):
+       find <BASE> -iname "*ros2_control*.xacro"
+
+  3. mujoco_model_path below must point at your CONVERTED MJCF
+     (piper.xml / scene.xml from urdf-to-mjcf) -- NOT the raw piper.urdf.
 """
 
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessExit, OnProcessStart
-from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 import xacro
-from launch.actions import ExecuteProcess
+
+MUJOCO_CONTROL_EXECUTABLE = "mujoco_ros2_control"  # confirmed via: ros2 pkg executables mujoco_ros2_control
+
 
 def generate_launch_description():
 
     # ── Paths ──────────────────────────────────────────────────────────────
-    BASE             = "/home/sathwik/mujoco_ws/piper/piper_resources"
+    BASE             = "/home/sathwik/robotic_arm_projects/mujoco_ws/piper/piper_resources"
     piper_desc_dir   = os.path.join(BASE, "piper_description")
     piper_moveit_dir = os.path.join(BASE, "piper_moveit_config")
 
-    urdf_xacro       = os.path.join(piper_desc_dir,   "urdf",   "piper.urdf.xacro")
-    srdf_file        = os.path.join(piper_moveit_dir, "config", "piper.srdf.xacro")
-    kinematics_yaml  = os.path.join(piper_moveit_dir, "config", "kinematics.yaml")
-    controllers_yaml = os.path.join(piper_moveit_dir, "config", "ros2_controllers.yaml")
-    moveit_ctrl_yaml = os.path.join(piper_moveit_dir, "config", "moveit_controllers.yaml")
-    rviz_config      = os.path.join(piper_moveit_dir, "config", "moveit.rviz")
-    mujoco_scene     = os.path.join(BASE, "piper_mujoco", "the_piper", "scene.xml")
+    urdf_xacro        = os.path.join(piper_moveit_dir,   "config",   "piper_description.urdf.xacro")
+    srdf_file         = os.path.join(piper_moveit_dir, "config", "piper_description.srdf")
+    kinematics_yaml   = os.path.join(piper_moveit_dir, "config", "kinematics.yaml")
+    controllers_yaml  = os.path.join(piper_moveit_dir, "config", "ros2_controllers.yaml")
+    moveit_ctrl_yaml  = os.path.join(piper_moveit_dir, "config", "moveit_controllers.yaml")
+    joint_limits_yaml = os.path.join(piper_moveit_dir, "config", "joint_limits.yaml")
+    rviz_config       = os.path.join(piper_moveit_dir, "config", "moveit.rviz")
+
+    # Converted MJCF, NOT the raw piper.urdf -- see module docstring point 3.
+    mujoco_scene = os.path.join(BASE, "piper_mujoco", "xml", "scene.xml")
+
+    # ── Xacro mappings ────────────────────────────────────────────────────
+    # Keys here MUST exactly match <xacro:arg name="..."> in piper.urdf.xacro.
+    # Your current piper.urdf.xacro declares: initial_positions_file, mujoco,
+    # mujoco_model_path. Add more here only if you add more xacro:args.
+    xacro_mappings = {
+        "use_mujoco":            "true",
+        "mujoco_model_path": mujoco_scene,
+    }
 
     # ── Robot description ─────────────────────────────────────────────────
     robot_description_content = xacro.process_file(
         urdf_xacro,
-        mappings={
-            "mujoco":          "true",
-            "mock_hardware":   "false",
-            "include_gripper": "true",
-        },
+        mappings=xacro_mappings,
     ).toxml()
     robot_description = {"robot_description": robot_description_content}
 
     # ── MoveIt config ──────────────────────────────────────────────────────
     moveit_config = (
         MoveItConfigsBuilder("piper", package_name="piper_moveit_config")
-        .robot_description(
-            file_path=urdf_xacro,
-            mappings={
-                "mujoco":          "true",
-                "mock_hardware":   "false",
-                "include_gripper": "true",
-            },
-        )
+        .robot_description(file_path=urdf_xacro, mappings=xacro_mappings)
         .robot_description_semantic(file_path=srdf_file)
         .robot_description_kinematics(file_path=kinematics_yaml)
-        .joint_limits(file_path=os.path.join(piper_moveit_dir, "config", "joint_limits.yaml"))
+        .joint_limits(file_path=joint_limits_yaml)
         .trajectory_execution(file_path=moveit_ctrl_yaml)
         .planning_pipelines(pipelines=["ompl"])
         .to_moveit_configs()
@@ -78,21 +100,24 @@ def generate_launch_description():
         parameters=[{"use_sim_time": True}],
     )
 
-    # ── MuJoCo ros2_control node ──────────────────────────────────────────
+    # MuJoCo IS the controller_manager here -- it hosts ros2_control and
+    # steps physics each control cycle.
     mujoco_control_node = Node(
         package="mujoco_ros2_control",
-        executable="mujoco_ros2_control",
+        executable=MUJOCO_CONTROL_EXECUTABLE,
         output="screen",
         parameters=[
             robot_description,
             controllers_yaml,
             {
-                "use_sim_time":      True,
+                "use_sim_time": True,
                 "mujoco_model_path": mujoco_scene,
             },
         ],
     )
 
+    # move_group_node: powers planning AND the interactive-marker service
+    # that RViz's MotionPlanning display talks to.
     move_group_node = Node(
         package="moveit_ros_move_group",
         executable="move_group",
@@ -106,6 +131,10 @@ def generate_launch_description():
         ],
     )
 
+    # rviz_node: loads moveit.rviz, which must already contain the
+    # "MotionPlanning" display (this is what gives you the draggable
+    # interactive marker at the end effector). If it's missing, add the
+    # MotionPlanning display in RViz manually once and re-save moveit.rviz.
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -123,8 +152,6 @@ def generate_launch_description():
     )
 
     # ── Controller spawners ────────────────────────────────────────────────
-    # All pointing to /mujoco_ros2_control where this fork's CM lives.
-
     def make_spawner(name):
         return Node(
             package="controller_manager",
@@ -132,13 +159,18 @@ def generate_launch_description():
             arguments=[name, "--controller-manager", "/controller_manager"],
             output="screen",
         )
+
     jsb_spawner  = make_spawner("joint_state_broadcaster")
     jtc_spawner  = make_spawner("arm_controller")
     grip_spawner = make_spawner("gripper_controller")
-    # admittance_spawner = make_spawner("admittance_controller")
 
     return LaunchDescription(
         [
+            mujoco_control_node,
+            robot_state_publisher_node,
+            world_to_base_tf_node,
+            move_group_node,
+            rviz_node,
             RegisterEventHandler(
                 event_handler=OnProcessStart(
                     target_action=mujoco_control_node,
@@ -148,7 +180,7 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=jsb_spawner,
-                    on_exit=[jtc_spawner], #admittance_spawner
+                    on_exit=[jtc_spawner],
                 )
             ),
             RegisterEventHandler(
@@ -157,10 +189,5 @@ def generate_launch_description():
                     on_exit=[grip_spawner],
                 )
             ),
-            rviz_node,
-            world_to_base_tf_node,
-            robot_state_publisher_node,
-            move_group_node,
-            mujoco_control_node
         ]
     )

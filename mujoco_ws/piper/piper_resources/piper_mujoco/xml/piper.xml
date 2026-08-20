@@ -1,0 +1,188 @@
+<mujoco model="piper_description">
+  <default>
+    <default class="robot">
+      <default class="upper_limb">
+        <joint damping="10.0" />
+        <position kp="300.0" kv="5.0" forcerange="-100.0 100.0" />
+      </default>
+      <default class="lower_limb">
+        <joint damping="5.0" />
+        <position kp="150.0" kv="2.0" forcerange="-50.0 50.0" />
+      </default>
+      <default class="gripper">
+        <joint damping="1.0" />
+        <position kp="300.0" kv="2.0" forcerange="-100.0 100.0" />
+      </default>
+      <default class="visual">
+        <geom contype="0" conaffinity="0" group="2" />
+      </default>
+      <default class="collision">
+        <geom contype="0" conaffinity="1" group="3" />
+      </default>
+    </default>
+    <default class="floor">
+      <geom type="plane" size="0 0 0.05" material="groundplane" />
+    </default>
+  </default>
+
+  <compiler angle="radian" meshdir="." balanceinertia="true" />
+
+  <visual>
+    <global offwidth="3840" offheight="2160" />
+  </visual>
+
+  <worldbody>
+    <body name="base_link" childclass="robot" pos="0 0 0.0255">
+      <inertial pos="-0.00979274765955341 1.82905827587138E-06 0.0410100126360189" mass="0.162548567403693" diaginertia="0.000226596924525071 0.000269444772561524 0.000222318258878636" />
+      <geom name="base_link_collision" type="mesh" mesh="base_link_collision_base_link" class="collision" />
+      <geom type="mesh" class="visual" name="base_link_visual_0" mesh="base_link_base_link_0" material="base_link_Material-金属_723-material" />
+      <geom type="mesh" class="visual" name="base_link_visual_1" mesh="base_link_base_link_1" material="base_link_a0000000-0000-0000-0000-000000000000_004-material" />
+      <geom type="mesh" class="visual" name="base_link_visual_2" mesh="base_link_base_link_2" material="base_link_Material-塑胶_024-material" />
+      <body name="link1" pos="0 0 0.123" quat="0.7071 0 0 -0.7071">
+        <inertial pos="0.00131676031927024 0.000310288842008612 -0.00922874512303437" mass="0.0978679932242825" diaginertia="7.76684558296782e-05 9.24967780161547e-05 8.24589062407807e-05" />
+        <joint name="joint1" type="hinge" class="upper_limb" range="-2.618 2.618" axis="0 0 1" />
+        <geom name="link1_collision" type="mesh" mesh="link1_collision_link1" class="collision" />
+        <geom type="mesh" class="visual" name="link1_visual_0" mesh="link1_link1_0" material="base_link_Material-金属_723-material" />
+        <geom type="mesh" class="visual" name="link1_visual_1" mesh="link1_link1_1" material="base_link_Material-塑胶_024-material" />
+        <body name="link2" quat="0.5 0.5 -0.5 -0.5">
+          <inertial pos="0.148793602378802 -0.00242026983944119 0.00175154638467948" mass="0.290888938633388" diaginertia="0.000148959640166183 0.00172800946632652 0.0017754628344594" />
+          <joint name="joint2" type="hinge" class="upper_limb" range="0 3.14" axis="0 0 1" />
+          <geom name="link2_collision" type="mesh" mesh="link2_collision_link2" class="collision" />
+          <geom type="mesh" class="visual" name="link2_visual_0" mesh="link2_link2_0" material="base_link_Material-塑胶_024-material" />
+          <geom type="mesh" class="visual" name="link2_visual_1" mesh="link2_link2_1" material="link2_Material-塑胶_053-material" />
+          <geom type="mesh" class="visual" name="link2_visual_2" mesh="link2_link2_2" material="link2_Material-塑胶__4__001-material" />
+          <geom type="mesh" class="visual" name="link2_visual_3" mesh="link2_link2_3" material="link2_Material-塑胶__3__023-material" />
+          <geom type="mesh" class="visual" name="link2_visual_4" mesh="link2_link2_4" material="link2_Material-塑胶__2__003-material" />
+          <geom type="mesh" class="visual" name="link2_visual_5" mesh="link2_link2_5" material="base_link_a0000000-0000-0000-0000-000000000000_004-material" />
+          <body name="link3" pos="0.28358 0.028726 0" quat="0.9987 0 0 0.0505">
+            <inertial pos="-0.0996835215213704 0.0349477226691318 0.000508025815507312" mass="0.290847697793211" diaginertia="0.000107879011637167 0.000214751671792086 0.000241923439340319" />
+            <joint name="joint3" type="hinge" class="upper_limb" range="-2.697 2.697" axis="0 0 1" />
+            <geom name="link3_collision" type="mesh" mesh="link3_collision_link3" class="collision" />
+            <geom type="mesh" class="visual" name="link3_visual_0" mesh="link3_link3_0" material="link2_Material-塑胶_053-material" />
+            <geom type="mesh" class="visual" name="link3_visual_1" mesh="link3_link3_1" material="link2_Material-塑胶__3__023-material" />
+            <geom type="mesh" class="visual" name="link3_visual_2" mesh="link3_link3_2" material="base_link_Material-塑胶_024-material" />
+            <body name="link4" pos="-0.24221 0.068514 0" quat="0.5448 -0.5448 -0.4508 0.4508">
+              <inertial pos="0.000276464622387979 -0.00102803669324875 -0.00472830700561663" mass="0.127087348341362" diaginertia="3.82011730423416e-05 4.87048555222578e-05 4.10592077565559e-05" />
+              <joint name="joint4" type="hinge" class="lower_limb" range="-1.832 1.832" axis="0 0 1" />
+              <geom name="link4_collision" type="mesh" mesh="link4_collision_link4" class="collision" />
+              <geom type="mesh" class="visual" name="link4_visual_0" mesh="link4_link4_0" material="base_link_Material-金属_723-material" />
+              <geom type="mesh" class="visual" name="link4_visual_1" mesh="link4_link4_1" material="link2_Material-塑胶_053-material" />
+              <geom type="mesh" class="visual" name="link4_visual_2" mesh="link4_link4_2" material="base_link_Material-塑胶_024-material" />
+              <body name="link5" quat="0.7071 0.7071 0 0">
+                <inertial pos="8.82262433516967E-05 0.0566829014808256 -0.00196119720482461" mass="0.144711242639457" diaginertia="4.39644313662493e-05 5.63173920951307e-05 4.88713664675268e-05" />
+                <joint name="joint5" type="hinge" class="lower_limb" range="-1.22 1.22" axis="0 0 1" />
+                <geom name="link5_collision" type="mesh" mesh="link5_collision_link5" class="collision" />
+                <geom type="mesh" class="visual" name="link5_visual_0" mesh="link5_link5_0" material="base_link_Material-金属_723-material" />
+                <geom type="mesh" class="visual" name="link5_visual_1" mesh="link5_link5_1" material="link2_Material-塑胶_053-material" />
+                <geom type="mesh" class="visual" name="link5_visual_2" mesh="link5_link5_2" material="base_link_a0000000-0000-0000-0000-000000000000_004-material" />
+                <geom type="mesh" class="visual" name="link5_visual_3" mesh="link5_link5_3" material="base_link_Material-塑胶_024-material" />
+                <body name="link6" pos="0 0.091 0.0014165" quat="0 0 -0.7071 -0.7071">
+                  <inertial pos="0.00103120214523473 0.0121761387587524 0.0315480874960164" mass="0.195187143240719" diaginertia="6.43790256535539e-05 0.000126146396374301 0.000154087076816444" />
+                  <joint name="joint6" type="hinge" class="lower_limb" range="-3.14 3.14" axis="0 0 1" />
+                  <geom name="link6_collision" type="mesh" mesh="link6_collision_link6_1" class="collision" />
+                  <geom name="link6_visual" quat="0.7071 0 0 0.7071" type="mesh" mesh="link6_link6" material="base_link_Material-塑胶_024-material" class="visual" />
+                  <body name="link7" pos="0 0 0.13503" quat="0 0 0.7071 0.7071">
+                    <inertial pos="-0.000277778383727112 -0.0467673043650824 -0.00921029491873201" mass="0.02648229234527" diaginertia="9.99787479924589e-06 6.1795212293655e-06 1.42102717246564e-05" />
+                    <joint name="joint7" type="slide" class="gripper" range="0 0.04" axis="0 0 -1" />
+                    <geom name="link7_collision" type="mesh" mesh="link7_collision_link7" class="collision" />
+                    <geom name="link7_visual" type="mesh" mesh="link7_link7" material="base_link_Material-塑胶_024-material" class="visual" />
+                  </body>
+                  <body name="link8" pos="0 0 0.13503" quat="0 0 -0.7071 0.7071">
+                    <inertial pos="0.000277816920932317 0.0467673824063769 -0.00921030054508036" mass="0.0264822021416248" diaginertia="9.99779119357223e-06 6.17952441557932e-06 1.4210192754512e-05" />
+                    <joint name="joint8" type="slide" range="0 0.04" axis="0 0 -1" />
+                    <geom name="link8_collision" type="mesh" mesh="link8_collision_link8" class="collision" />
+                    <geom type="mesh" class="visual" name="link8_visual_0" mesh="link8_link8_0" material="base_link_Material-金属_723-material" />
+                    <geom type="mesh" class="visual" name="link8_visual_1" mesh="link8_link8_1" material="base_link_Material-塑胶_024-material" />
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <light pos="0 0 2." dir="0 0 -1" directional="true" />
+    <geom name="floor" class="floor" size="0 0 0.05" />
+  </worldbody>
+
+  <asset>
+    <material name="base_link_Material-塑胶_024-material" rgba="0.58823529 0.58823529 0.58823529 1.0" />
+    <material name="base_link_a0000000-0000-0000-0000-000000000000_004-material" rgba="0.98039216 0.98039216 0.98039216 1.0" />
+    <material name="base_link_Material-金属_723-material" rgba="0.00000000 0.00000000 0.00000000 1.0" />
+    <material name="link2_Material-塑胶__2__003-material" rgba="0.08627451 0.08627451 0.08627451 1.0" />
+    <material name="link2_Material-塑胶__3__023-material" rgba="0.81568627 0.14901961 0.14901961 1.0" />
+    <material name="link2_Material-塑胶__4__001-material" rgba="0.50196078 0.50196078 0.50196078 1.0" />
+    <material name="link2_Material-塑胶_053-material" rgba="0.14117647 0.14117647 0.14117647 1.0" />
+    <mesh name="base_link_collision_base_link" file="meshes/meshes/base_link.STL" />
+    <mesh name="link1_collision_link1" file="meshes/meshes/link1.STL" />
+    <mesh name="link2_collision_link2" file="meshes/meshes/link2.STL" />
+    <mesh name="link3_collision_link3" file="meshes/meshes/link3.STL" />
+    <mesh name="link4_collision_link4" file="meshes/meshes/link4.STL" />
+    <mesh name="link5_collision_link5" file="meshes/meshes/link5.STL" />
+    <mesh name="link6_collision_link6_1" file="meshes/meshes/link6_1.STL" />
+    <mesh name="link6_link6" file="meshes/meshes/link6.obj" />
+    <mesh name="link7_collision_link7" file="meshes/meshes/link7.STL" />
+    <mesh name="link7_link7" file="meshes/meshes/link7.obj" />
+    <mesh name="link8_collision_link8" file="meshes/meshes/link8.STL" />
+    <mesh name="base_link_base_link_0" file="meshes/meshes/base_link/base_link_0.obj" />
+    <mesh name="base_link_base_link_1" file="meshes/meshes/base_link/base_link_1.obj" />
+    <mesh name="base_link_base_link_2" file="meshes/meshes/base_link/base_link_2.obj" />
+    <mesh name="link1_link1_0" file="meshes/meshes/link1/link1_0.obj" />
+    <mesh name="link1_link1_1" file="meshes/meshes/link1/link1_1.obj" />
+    <mesh name="link2_link2_0" file="meshes/meshes/link2/link2_0.obj" />
+    <mesh name="link2_link2_1" file="meshes/meshes/link2/link2_1.obj" />
+    <mesh name="link2_link2_2" file="meshes/meshes/link2/link2_2.obj" />
+    <mesh name="link2_link2_3" file="meshes/meshes/link2/link2_3.obj" />
+    <mesh name="link2_link2_4" file="meshes/meshes/link2/link2_4.obj" />
+    <mesh name="link2_link2_5" file="meshes/meshes/link2/link2_5.obj" />
+    <mesh name="link3_link3_0" file="meshes/meshes/link3/link3_0.obj" />
+    <mesh name="link3_link3_1" file="meshes/meshes/link3/link3_1.obj" />
+    <mesh name="link3_link3_2" file="meshes/meshes/link3/link3_2.obj" />
+    <mesh name="link4_link4_0" file="meshes/meshes/link4/link4_0.obj" />
+    <mesh name="link4_link4_1" file="meshes/meshes/link4/link4_1.obj" />
+    <mesh name="link4_link4_2" file="meshes/meshes/link4/link4_2.obj" />
+    <mesh name="link5_link5_0" file="meshes/meshes/link5/link5_0.obj" />
+    <mesh name="link5_link5_1" file="meshes/meshes/link5/link5_1.obj" />
+    <mesh name="link5_link5_2" file="meshes/meshes/link5/link5_2.obj" />
+    <mesh name="link5_link5_3" file="meshes/meshes/link5/link5_3.obj" />
+    <mesh name="link8_link8_0" file="meshes/meshes/link8/link8_0.obj" />
+    <mesh name="link8_link8_1" file="meshes/meshes/link8/link8_1.obj" />
+    <mesh name="lego_block1"       file="2x2.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="lego_block2"       file="4x2.stl" scale="0.001 0.001 0.001"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300" />
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2" />
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072" />
+  </asset>
+
+  <actuator>
+    <position name="joint1" joint="joint1" class="upper_limb" ctrlrange="-2.618 2.618" />
+    <position name="joint2" joint="joint2" class="upper_limb" ctrlrange="0.0 3.14" />
+    <position name="joint3" joint="joint3" class="upper_limb" ctrlrange="-2.697 0.0" />
+    <position name="joint4" joint="joint4" class="lower_limb" ctrlrange="-1.832 1.832" />
+    <position name="joint5" joint="joint5" class="lower_limb" ctrlrange="-1.22 1.22" />
+    <position name="joint6" joint="joint6" class="lower_limb" ctrlrange="-3.14 3.14" />
+    <position name="joint7" joint="joint7" class="gripper" ctrlrange="0.0 0.04" />
+  </actuator>
+
+  <equality>
+    <joint joint1="joint7" joint2="joint8" polycoef="0.0 1.0 0 0 0" solimp="0.95 0.99 0.001" solref="0.005 1" />
+  </equality>
+
+  <visual>
+    <rgba haze="0.15 0.25 0.35 1" />
+  </visual>
+
+  <sensor>
+    <jointpos name="joint1_pos" joint="joint1" />
+    <jointpos name="joint2_pos" joint="joint2" />
+    <jointpos name="joint3_pos" joint="joint3" />
+    <jointpos name="joint4_pos" joint="joint4" />
+    <jointpos name="joint5_pos" joint="joint5" />
+    <jointpos name="joint6_pos" joint="joint6" />
+    <jointpos name="gripper_pos" joint="joint7" />
+  </sensor>
+
+  <keyframe>
+    <key qpos="0 1.5 -1.2 0 0.84 0 0.03 0.03" ctrl="0 1.5 -1.2 0 0.84 0 0.03" />
+  </keyframe>
+</mujoco>

@@ -1,0 +1,23 @@
+Tue Aug 18 23:00:16 2026
+ERROR: Load model error: ParseXML: Error opening file '/home/sathwik/robotic_arm_projects/mujoco_ws/piper/piper_resources/mujoco/xml/piper.xml'
+
+Tue Aug 18 23:00:59 2026
+ERROR: Load model error: ParseXML: Error opening file '/home/sathwik/robotic_arm_projects/mujoco_ws/piper/piper_resources/mujoco/xml/piper.xml'
+
+Tue Aug 18 23:05:49 2026
+ERROR: Load model error: ParseXML: Error opening file '/home/sathwik/robotic_arm_projects/mujoco_ws/piper/piper_resources/mujoco/xml/piper.xml'
+
+Tue Aug 18 23:07:43 2026
+ERROR: Load model error: ParseXML: Error opening file '/home/sathwik/robotic_arm_projects/mujoco_ws/piper/piper_resources/mujoco/xml/scene.xml'
+
+Tue Aug 18 23:08:11 2026
+ERROR: Load model error: ParseXML: Error opening file '/home/sathwik/robotic_arm_projects/mujoco_ws/piper/piper_resources/mujoco/xml/scene.xml'
+
+Tue Aug 18 23:08:52 2026
+ERROR: Load model error: Error: mesh 'lego_block1' not found in geom 35
+Element name 'object_geom1', id 35, line 63
+
+Tue Aug 18 23:16:06 2026
+ERROR: Load model error: Error: mesh 'lego_block1' not found in geom 35
+Element name 'object_geom1', id 35, line 63
+
