@@ -50,9 +50,9 @@ struct BlockConfig
   std::string place_frame = "base_link";
 };
 
-static constexpr double BLOCK_DIM_X = 0.03;
-static constexpr double BLOCK_DIM_Y = 0.03;
-static constexpr double BLOCK_DIM_Z = 0.10;
+static constexpr double BLOCK_DIM_X = 0.02;
+static constexpr double BLOCK_DIM_Y = 0.02;
+static constexpr double BLOCK_DIM_Z = 0.02;
 
 struct StationTemplate
 {
@@ -563,7 +563,7 @@ void MTCTaskNode::execute(const std::shared_ptr<GoalHandleArmCommand> goal_handl
     return;
   }
 
-  if (!task_.plan(2))
+  if (!task_.plan(3))
   {
     RCLCPP_ERROR(LOGGER, "Planning failed for block '%s'", block.id.c_str());
     result->success = false;

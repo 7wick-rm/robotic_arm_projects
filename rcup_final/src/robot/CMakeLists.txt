@@ -11,7 +11,7 @@ find_package(rclcpp REQUIRED)
 find_package(urdf REQUIRED)
 
 
-install(DIRECTORY config meshes urdf worlds launch maps DESTINATION share/${PROJECT_NAME}/)
+install(DIRECTORY config meshes urdf worlds models launch maps DESTINATION share/${PROJECT_NAME}/)
 install(PROGRAMS
   scripts/destination.py
   DESTINATION lib/${PROJECT_NAME}

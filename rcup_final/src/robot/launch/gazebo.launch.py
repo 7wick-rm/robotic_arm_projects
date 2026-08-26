@@ -1,4 +1,6 @@
 import os
+from os import pathsep
+from pathlib import Path
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess, TimerAction, SetEnvironmentVariable
 from launch_ros.actions import Node
@@ -6,6 +8,9 @@ from launch.substitutions import Command
 from launch_ros.parameter_descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 from moveit_configs_utils import MoveItConfigsBuilder
+from launch_ros.actions import Node, ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
+
 
 def generate_launch_description():
 
@@ -87,15 +92,24 @@ def generate_launch_description():
         output='screen',
         parameters=[{'use_sim_time': True}]
     )
-    set_resource_path = SetEnvironmentVariable(
-        name='IGN_GAZEBO_RESOURCE_PATH',
-        value=pkg_path
-    )
 
-    set_resource_path2 = SetEnvironmentVariable(
-        name='GZ_SIM_RESOURCE_PATH',
-        value=pkg_path
-    )
+    # set_resource_path = SetEnvironmentVariable(
+    #     name='IGN_GAZEBO_RESOURCE_PATH',
+    #     value=pkg_path
+    # )
+
+    # set_resource_path2 = SetEnvironmentVariable(
+    #     name='GZ_SIM_RESOURCE_PATH',
+    #     value=pkg_path
+    # )
+
+    model_path = str(Path(pkg_path).parent.resolve())
+    model_path += pathsep + os.path.join(get_package_share_directory("robot"), 'models')
+
+    gazebo_resource_path = SetEnvironmentVariable(
+        "GZ_SIM_RESOURCE_PATH",
+        model_path
+        )
 
     set_plugin_path = SetEnvironmentVariable(
         name='IGN_GAZEBO_SYSTEM_PLUGIN_PATH',
@@ -116,10 +130,9 @@ def generate_launch_description():
                    '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
                    '/world/empty/pose/info@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
                     '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
-                    "/camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
-                    "/depth_camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
-                    "/depth_camera/depth/image_raw@sensor_msgs/msg/Image[gz.msgs.Image",
-                    "/depth_camera/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked",
+                    '/rgbd_camera/image@sensor_msgs/msg/Image[ignition.msgs.Image',
+                    '/rgbd_camera/depth_image@sensor_msgs/msg/Image[ignition.msgs.Image',
+                    '/rgbd_camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo',
                 ],
         parameters=[{'use_sim_time': True}],
     )
@@ -458,10 +471,33 @@ def generate_launch_description():
         ],
     )
 
+    point_cloud_processor = ComposableNodeContainer(
+            name='image_proc_container',
+            namespace='',
+            package='rclcpp_components',
+            executable='component_container',
+            composable_node_descriptions=[
+                ComposableNode(
+                    package='depth_image_proc',
+                    plugin='depth_image_proc::PointCloudXyzrgbNode',
+                    name='point_cloud_xyzrgb_node',
+                    remappings=[
+                        ('rgb/image_rect_color', '/rgbd_camera/image'),
+                        ('depth_registered/image_rect', '/rgbd_camera/depth_image'),
+                        ('rgb/camera_info', '/rgbd_camera/camera_info'),
+                        ('points', '/rgbd_camera/points')
+                    ],
+                    parameters=[{'use_sim_time': True}]
+                ),
+            ],
+            output='screen',
+        )
+
     return LaunchDescription([
-        set_resource_path,
-        set_resource_path2,
+        # set_resource_path,
+        # set_resource_path2,
         set_plugin_path,
+        gazebo_resource_path,
         gazebo,
         # rviz_node,
         robot_state_publisher,
@@ -486,6 +522,7 @@ def generate_launch_description():
         align_node,
         gazebo_station_relay,
         move_group_node,
-        rviz_node
+        rviz_node,
+        point_cloud_processor
     ])
 

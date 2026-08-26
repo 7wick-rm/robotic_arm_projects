@@ -35,8 +35,10 @@
         <joint name="Joint5" value="0"/>
     </group_state>
     <group_state name="close" group="gripper">
-        <joint name="Jaw" value="-0.009"/>
-        <joint name="Jaw2" value="-0.009"/>
+        <joint name="Jaw" value="-0.0116"/>
+        <joint name="Jaw2" value="-0.0116"/>
+        <!-- <joint name="Jaw" value="-0.005"/>
+        <joint name="Jaw2" value="-0.005"/> -->
     </group_state>
     <group_state name="open" group="gripper">
         <joint name="Jaw" value="0.03"/>

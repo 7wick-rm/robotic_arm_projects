@@ -16,9 +16,9 @@ SHELF_SLOTS = [
 ]
 
 BASE_SLOTS = [
-    (-0.09, -0.090, 0.17),   # base slot 0
-    (-0.09, 0.005, 0.17),   # base slot 1
-    (-0.09, 0.100, 0.17),   # base slot 2
+    (-0.11, -0.090, 0.16),   # base slot 0
+    (-0.11, 0.005, 0.16),   # base slot 1
+    (-0.11, 0.100, 0.16),   # base slot 2
 ]
 
 # Place coords per block slot on workbench (x, y, z)
@@ -29,7 +29,7 @@ WB_SLOTS = [
 ]
 
 NAV_TIMEOUT = 250.0
-ARM_TIMEOUT = 200.0
+ARM_TIMEOUT = 500.0
 
 class TempWarehouseNode(Node):
 
