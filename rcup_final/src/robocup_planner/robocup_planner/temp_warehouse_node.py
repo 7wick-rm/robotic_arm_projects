@@ -28,8 +28,8 @@ WB_SLOTS = [
     (0.50, 0.50, 0.10),    # slot 2 - top block
 ]
 
-NAV_TIMEOUT = 250.0
-ARM_TIMEOUT = 500.0
+NAV_TIMEOUT = 800.0
+ARM_TIMEOUT = 800.0
 
 class TempWarehouseNode(Node):
 

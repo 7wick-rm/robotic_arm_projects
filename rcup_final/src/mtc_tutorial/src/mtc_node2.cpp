@@ -478,7 +478,7 @@ void MTCTaskNode::execute(const std::shared_ptr<GoalHandleArmCommand> goal_handl
     {
       block.pick_x     = stored_it->second.x;
       block.pick_y     = stored_it->second.y;
-      block.pick_z     = stored_it->second.z - 0.06;
+      block.pick_z     = stored_it->second.z - 0.08;
       block.pick_frame = stored_it->second.frame;
 
       RCLCPP_INFO(LOGGER,
