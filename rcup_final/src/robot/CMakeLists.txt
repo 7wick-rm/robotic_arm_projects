@@ -18,9 +18,10 @@ install(PROGRAMS
 )
 
 install(PROGRAMS
-  scripts/destination.py
   scripts/align.py
+  scripts/destination.py
   scripts/gazebo_station_relay.py
+  scripts/wait_for_active.py
   DESTINATION lib/${PROJECT_NAME}
 )
   

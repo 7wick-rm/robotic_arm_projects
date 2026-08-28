@@ -478,7 +478,7 @@ void MTCTaskNode::execute(const std::shared_ptr<GoalHandleArmCommand> goal_handl
     {
       block.pick_x     = stored_it->second.x;
       block.pick_y     = stored_it->second.y;
-      block.pick_z     = stored_it->second.z - 0.08;
+      block.pick_z     = stored_it->second.z - 0.12;
       block.pick_frame = stored_it->second.frame;
 
       RCLCPP_INFO(LOGGER,
@@ -563,7 +563,7 @@ void MTCTaskNode::execute(const std::shared_ptr<GoalHandleArmCommand> goal_handl
     return;
   }
 
-  if (!task_.plan(3))
+  if (!task_.plan(1))
   {
     RCLCPP_ERROR(LOGGER, "Planning failed for block '%s'", block.id.c_str());
     result->success = false;
@@ -625,7 +625,7 @@ mtc::Task MTCTaskNode::createTask(const BlockConfig& block)
 
   auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(node_, "ompl");
   sampling_planner->setPlannerId("TRRT");
-  sampling_planner->setTimeout(15.0);  
+  sampling_planner->setTimeout(20.0);  
   auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
 
   auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
@@ -650,7 +650,7 @@ mtc::Task MTCTaskNode::createTask(const BlockConfig& block)
     auto stage = std::make_unique<mtc::stages::Connect>(
         "move to grasp",
         mtc::stages::Connect::GroupPlannerVector{ { arm_group_name, sampling_planner } });
-    stage->setTimeout(5.0);
+    stage->setTimeout(10.0);
     stage->properties().configureInitFrom(mtc::Stage::PARENT, { "group" });
     task.add(std::move(stage));
   }
@@ -678,7 +678,7 @@ mtc::Task MTCTaskNode::createTask(const BlockConfig& block)
       wrapper->setIKFrame(tf, hand_frame);
       wrapper->setMinSolutionDistance(1.0);
       wrapper->setMaxIKSolutions(5);
-      wrapper->setTimeout(1.0);
+      wrapper->setTimeout(10.0);
       wrapper->properties().configureInitFrom(mtc::Stage::PARENT, { "eef", "group" });
       wrapper->properties().configureInitFrom(mtc::Stage::INTERFACE, { "target_pose" });
       grasp->insert(std::move(wrapper));
@@ -759,7 +759,7 @@ mtc::Task MTCTaskNode::createTask(const BlockConfig& block)
     auto stage = std::make_unique<mtc::stages::Connect>(
         "move to place",
         mtc::stages::Connect::GroupPlannerVector{ { arm_group_name, sampling_planner } });
-    stage->setTimeout(5.0);
+    stage->setTimeout(10.0);
     stage->properties().configureInitFrom(mtc::Stage::PARENT);
     task.add(std::move(stage));
   }
@@ -787,7 +787,7 @@ mtc::Task MTCTaskNode::createTask(const BlockConfig& block)
       auto wrapper = std::make_unique<mtc::stages::ComputeIK>("place pose IK", std::move(gen));
       wrapper->setMaxIKSolutions(8);
       wrapper->setMinSolutionDistance(0.5);
-      wrapper->setTimeout(2.0);
+      wrapper->setTimeout(10.0);
       wrapper->setIKFrame(block.id);
       wrapper->properties().configureInitFrom(mtc::Stage::PARENT, { "eef", "group" });
       wrapper->properties().configureInitFrom(mtc::Stage::INTERFACE, { "target_pose" });

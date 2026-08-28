@@ -100,5 +100,7 @@
       </ray>
     </sensor>
   </gazebo>
+  <!-- Camera-stuff -->
+
 
 </robot>

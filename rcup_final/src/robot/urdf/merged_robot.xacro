@@ -367,6 +367,12 @@
       <box size="0.07 0.07 0.035"/>
     </geometry>
   </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="0.07 0.07 0.035"/>
+    </geometry>
+  </collision>
 </link>
 
 <joint name="counterweight_joint" type="fixed">
@@ -1139,5 +1145,108 @@
     <axis
       xyz="0 0 0" />
   </joint>
+
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.025 0.09 0.025" />
+      </geometry>
+      <material name="akshit">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.06 0.03 0.03" />
+      </geometry>
+      <material name="akshit">
+        <color rgba="1 1 1 1" />
+      </material>
+    </collision>
+    <inertial>
+      <mass value="0.0000000001" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.0000000001" ixy="0.0" ixz="0.0" iyy="0.0000000001" iyz="0.0" izz="0.0000000001" />
+    </inertial>
+  </link>
+
+
+
+  <link name="camera_rod">
+    <visual>
+      <origin xyz="0.19 0 0.175" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.005" length="0.35"/>
+      </geometry>
+      <material name="akshit">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual> 
+    <collision>
+      <origin xyz="0.19 0 0.175" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.005" length="0.35"/>
+      </geometry>
+      <material name="akshit">
+        <color rgba="1 1 1 1" />
+      </material>
+    </collision> 
+
+    <inertial>
+      <mass value="0.1" />
+      <origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
+      <inertia ixx="0.0000000001" ixy="0.0" ixz="0.0" iyy="0.0000000001" iyz="0.0" izz="0.0000000001" />
+    </inertial>
+  </link>
+    <!-- Mount depth camera right next to regular camera -->
+  <joint name="camera_rod_joint" type="fixed">
+      <origin xyz="0.0 -0.13 0.05" rpy="0.0 0.0 0.0"/>
+      <parent link="base_link"/>
+      <child link="camera_rod"/>
+  </joint>
+
+  <joint name="rod_to_camera" type="fixed">
+    <parent link="camera_rod"/>
+    <child link="camera_link"/>
+    <origin xyz="0.19 0 0.35" rpy="0 0.785 0"/>
+  </joint>
+
+  <link name="camera_optical_link">
+      <inertial>
+      <mass value="0.0000000001" />
+      <origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
+      <inertia ixx="0.0000000001" ixy="0.0" ixz="0.0" iyy="0.0000000001" iyz="0.0" izz="0.0000000001" />
+    </inertial>
+  </link>
+
+  <joint name="optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_optical_link"/>
+    <origin xyz="0 0 0" rpy="0 1.5708 1.5708"/>
+  </joint>
+
+  <gazebo reference="camera_link">
+    <sensor name="rgbd_camera" type="rgbd_camera">
+      <pose>0 0 0.07 0 0 0</pose>
+      <camera>
+        <horizontal_fov>1.477</horizontal_fov>
+        <image>
+          <width>1280</width>
+          <height>720</height>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>10</far>
+        </clip>
+      </camera>
+      <always_on>1</always_on>
+      <update_rate>20</update_rate>
+      <visualize>true</visualize>
+      <topic>rgbd_camera</topic>
+    </sensor>
+</gazebo>
+
 
 </robot>

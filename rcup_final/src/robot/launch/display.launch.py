@@ -45,7 +45,7 @@ def generate_launch_description():
         executable="rviz2",
         name="rviz2",
         output="screen",
-        arguments=["-d", "/home/navya/Documents/robot/src/robot/config/display.rviz"],
+        arguments=["-d", "/home/sathwik/robotic_arm_projects/rcup_final/src/robot/config/display.rviz"],
     )
 
     return LaunchDescription([

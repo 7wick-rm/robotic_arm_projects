@@ -16,9 +16,9 @@ SHELF_SLOTS = [
 ]
 
 BASE_SLOTS = [
-    (-0.11, -0.090, 0.16),   # base slot 0
-    (-0.11, 0.005, 0.16),   # base slot 1
-    (-0.11, 0.100, 0.16),   # base slot 2
+    (-0.11, -0.090, 0.19),   # base slot 0
+    (-0.11, 0.005, 0.19),   # base slot 1
+    (-0.11, 0.100, 0.19),   # base slot 2
 ]
 
 # Place coords per block slot on workbench (x, y, z)

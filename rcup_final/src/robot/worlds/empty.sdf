@@ -975,24 +975,6 @@
          Original box pose: -4.75 -0.75 0.45 0 0 0.0
          Shelf pose: x/y/yaw taken from box, z kept at shelf's original 0.0
          ===================================================================== -->
-    <light name="s_bot_left_spotlight" type="spot">
-      <pose>-4.6500 -0.7500 0.84 0 0 0</pose>
-      <cast_shadows>true</cast_shadows>
-      <intensity>2</intensity>
-      <direction>0 0 -1</direction>
-      <diffuse>1.0 1.0 1.0 1</diffuse>
-      <attenuation>
-        <range>0.8</range>
-        <constant>1.0</constant>
-        <linear>0.3</linear>
-        <quadratic>0.01</quadratic>
-      </attenuation>
-      <spot>
-        <inner_angle>0.4</inner_angle>
-        <outer_angle>0.8</outer_angle>
-        <falloff>1.0</falloff>
-      </spot>
-    </light>
 
     <model name="s_bot_left_shelf_unit">
       <static>true</static>
@@ -1126,7 +1108,7 @@
   <model name="s_bot_left_block_red">
     <static>false</static>
     <link name="s_bot_left_block_red_link">
-      <pose>-4.55 -1.03 0.183 0 0 1.5708</pose>
+      <pose>-4.55 -1.0 0.183 0 0 1.5708</pose>
       <inertial>
         <mass>0.01</mass>
         <inertia>
