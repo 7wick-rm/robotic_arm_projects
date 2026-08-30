@@ -1,5 +1,0 @@
-arm:
-  kinematics_solver: pick_ik/PickIkPlugin
-  mode: local
-  position_threshold: 0.005
-  orientation_threshold: 0.005

@@ -14,6 +14,9 @@ from launch_ros.descriptions import ComposableNode
 
 def generate_launch_description():
 
+
+    gpu_offload = SetEnvironmentVariable(name="__NV_PRIME_RENDER_OFFLOAD", value="1")
+    glx_vendor = SetEnvironmentVariable(name="__GLX_VENDOR_LIBRARY_NAME", value="nvidia")
     package_name  = 'robot'
     urdf_filename = 'robo.urdf.xacro'
     robot_name    = 'mecanum_arm_robot'
@@ -44,46 +47,46 @@ def generate_launch_description():
         ]
     )
 
-    slam_node = TimerAction(
-    period=30.0,
-        actions=[
-            Node(
-                package='slam_toolbox',
-                executable='async_slam_toolbox_node',
-                name='slam_toolbox',
-                output='screen',
-                parameters=[
-                    os.path.join(pkg_path, 'config', 'slam.yaml')
-                ]
-            )
-        ]
-    )
+    # slam_node = TimerAction(
+    # period=30.0,
+    #     actions=[
+    #         Node(
+    #             package='slam_toolbox',
+    #             executable='async_slam_toolbox_node',
+    #             name='slam_toolbox',
+    #             output='screen',
+    #             parameters=[
+    #                 os.path.join(pkg_path, 'config', 'slam.yaml')
+    #             ]
+    #         )
+    #     ]
+    # )
 
-    slam_node = TimerAction(
-        period=15.0,
-        actions=[
-            Node(
-                package='slam_toolbox',
-                executable='async_slam_toolbox_node',
-                name='slam_toolbox',
-                output='screen',
-                parameters=[{
-                    'use_sim_time': True,
-                    'odom_frame': 'odom',
-                    'map_frame': 'map',
-                    'base_frame': 'base_footprint',
-                    'scan_topic': '/scan',
-                    'mode': 'mapping',
-                    'minimum_laser_range': 0.12,
-                    'maximum_laser_range': 10.0,
-                    'transform_timeout': 1.0,
-                    'tf_buffer_duration': 30.0,
-                    'throttle_scans': 1
+    # slam_node = TimerAction(
+    #     period=15.0,
+    #     actions=[
+    #         Node(
+    #             package='slam_toolbox',
+    #             executable='async_slam_toolbox_node',
+    #             name='slam_toolbox',
+    #             output='screen',
+    #             parameters=[{
+    #                 'use_sim_time': True,
+    #                 'odom_frame': 'odom',
+    #                 'map_frame': 'map',
+    #                 'base_frame': 'base_footprint',
+    #                 'scan_topic': '/scan',
+    #                 'mode': 'mapping',
+    #                 'minimum_laser_range': 0.12,
+    #                 'maximum_laser_range': 10.0,
+    #                 'transform_timeout': 1.0,
+    #                 'tf_buffer_duration': 30.0,
+    #                 'throttle_scans': 1
                 
-                }]
-            )
-        ]
-    )
+    #             }]
+    #         )
+    #     ]
+    # )
 
     rviz_node = Node(
         package='rviz2',
@@ -208,15 +211,6 @@ def generate_launch_description():
                 output='screen',
             )
         ]
-    )
-
-    ros_gz_image_bridge = Node(
-        package="ros_gz_image",
-        executable="image_bridge",
-        arguments=[
-            "/camera/image_raw",
-        ],
-        parameters=[{'use_sim_time': True}]
     )
 
     arm_controller_spawner = TimerAction(
@@ -471,42 +465,20 @@ def generate_launch_description():
         ],
     )
 
-    point_cloud_processor = ComposableNodeContainer(
-            name='image_proc_container',
-            namespace='',
-            package='rclcpp_components',
-            executable='component_container',
-            composable_node_descriptions=[
-                ComposableNode(
-                    package='depth_image_proc',
-                    plugin='depth_image_proc::PointCloudXyzrgbNode',
-                    name='point_cloud_xyzrgb_node',
-                    remappings=[
-                        ('rgb/image_rect_color', '/rgbd_camera/image'),
-                        ('depth_registered/image_rect', '/rgbd_camera/depth_image'),
-                        ('rgb/camera_info', '/rgbd_camera/camera_info'),
-                        ('points', '/rgbd_camera/points')
-                    ],
-                    parameters=[{'use_sim_time': True}]
-                ),
-            ],
-            output='screen',
-        )
-
     return LaunchDescription([
         # set_resource_path,
         # set_resource_path2,
         set_plugin_path,
+        gpu_offload,
+        glx_vendor,
         gazebo_resource_path,
         gazebo,
-        # rviz_node,
         robot_state_publisher,
         bridge,
         spawn_robot,
         # tf_relay,
         joint_state_broadcaster_spawner,
         mecanum_controller_spawner,
-        ros_gz_image_bridge,
         arm_controller_spawner,
         gripper_controller_spawner,
         ekf_node,
@@ -523,6 +495,8 @@ def generate_launch_description():
         gazebo_station_relay,
         move_group_node,
         rviz_node,
-        point_cloud_processor
+        # point_cloud_processor,
+        # inference_node,
+        # pcl_node
     ])
 

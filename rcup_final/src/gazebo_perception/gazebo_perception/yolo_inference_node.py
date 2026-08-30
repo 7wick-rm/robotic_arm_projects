@@ -32,7 +32,7 @@ class YOLOInferenceNode(Node):
 
         cv_image = self.bridge.imgmsg_to_cv2(img_msg=msg, desired_encoding="bgr8")
 
-        results = self.model.track(cv_image, verbose=False,  persist=True)
+        results = self.model.track(cv_image, verbose=False,  persist=True, conf=0.6)
 
         annotated_image = results[0].plot()
         annotated_msg = self.bridge.cv2_to_imgmsg(annotated_image, encoding="bgr8")
