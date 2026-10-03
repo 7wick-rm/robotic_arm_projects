@@ -84,18 +84,13 @@ def generate_launch_description():
     arm_description_dir = get_package_share_directory("custom_arm_description")
 
     model_arg = DeclareLaunchArgument(name="model", default_value=os.path.join(
-                                        arm_description_dir, "urdf", "arm.urdf.xacro"
+                                        arm_description_dir, "urdf", "arm_urdf.xacro"
                                         ),
                                       description="Absolute path to robot urdf file")
-
-    ros_distro = os.environ["ROS_DISTRO"]
-    is_ignition = "True" if ros_distro == "humble" else "False"
 
     robot_description = ParameterValue(Command([
             "xacro ",
             LaunchConfiguration("model"),
-            " is_ignition:=",
-            is_ignition
         ]),
         value_type=str
     )
@@ -116,7 +111,7 @@ def generate_launch_description():
         executable="rviz2",
         name="rviz2",
         output="screen",
-        arguments=["-d", os.path.join(arm_description_dir, "config", "display_new.rviz")],
+        # arguments=["-d", os.path.join(arm_description_dir, "config", "display_new.rviz")],
     )
 
     return LaunchDescription([

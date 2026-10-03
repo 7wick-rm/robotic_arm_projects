@@ -7,7 +7,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable
 from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-
+from moveit_configs_utils import MoveItConfigsBuilder
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
@@ -39,14 +39,9 @@ def generate_launch_description():
         model_path
         )
 
-    ros_distro = os.environ["ROS_DISTRO"]
-    is_ignition = "True" if ros_distro == "humble" else "False"
-
     robot_description = ParameterValue(Command([
             "xacro ",
             LaunchConfiguration("model"),
-            " is_ignition:=",
-            is_ignition
         ]),
         value_type=str
     )
@@ -54,8 +49,46 @@ def generate_launch_description():
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
+        name='robot_state_publisher',
+        output='screen',
         parameters=[{"robot_description": robot_description,
                      "use_sim_time": True}]
+    )
+
+    controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[
+            {"robot_description": robot_description,
+             "use_sim_time": True},
+            os.path.join(
+                get_package_share_directory("custom_arm_moveit"),
+                "config",
+                "ros2_controllers.yaml",
+            ),
+        ],
+    )
+
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "joint_state_broadcaster",
+            "--controller-manager",
+            "/controller_manager",
+        ],
+    )
+
+    arm_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["arm_controller", "--controller-manager", "/controller_manager"],
+    )
+
+    gripper_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["gripper_controller", "--controller-manager", "/controller_manager"],
     )
 
     gazebo = IncludeLaunchDescription(
@@ -92,12 +125,57 @@ def generate_launch_description():
         ],
     )
 
+    moveit_config = (
+        MoveItConfigsBuilder("arm_urdf", package_name="custom_arm_moveit")
+        .to_moveit_configs()
+    )
+
+    move_group_node = Node(
+        package="moveit_ros_move_group",
+        executable="move_group",
+        output="screen",
+        parameters=[
+            moveit_config.to_dict(),
+            # Override fake controller manager with real one
+            {"moveit_controller_manager": 
+                "moveit_simple_controller_manager/MoveItSimpleControllerManager"},
+            {"use_sim_time": True},
+            {"capabilities": "move_group/ExecuteTaskSolutionCapability"},
+        ],
+    )
+
+    rviz_config_file = os.path.join(
+        get_package_share_directory("custom_arm_moveit"),
+        "config",
+        "moveit.rviz",
+    )
+    rviz_node = Node(
+        package="rviz2",
+        executable="rviz2",
+        output="screen",
+        arguments=["-d", rviz_config_file],
+        parameters=[
+            moveit_config.planning_pipelines,
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
+            {"use_sim_time": True}
+        ],
+    )
+
     return LaunchDescription([
         model_arg,
         world_name_arg,
         gazebo_resource_path,
         robot_state_publisher_node,
+        controller_manager,
+        joint_state_broadcaster_spawner,
+        arm_controller_spawner,
+        gripper_controller_spawner,
         gazebo,
         gz_spawn_entity,
-        gz_ros2_bridge
+        gz_ros2_bridge,
+        move_group_node,
+        rviz_config_file,
+        rviz_node
     ])

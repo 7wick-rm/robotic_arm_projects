@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="robot_description" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Selects real-hardware test mode (Joint1/Joint2 on real servos, rest mocked,
+       no Gazebo) vs. simulation mode (all joints via Gazebo, default) -->
+  <xacro:arg name="real_hw_test" default="false"/>
+
+  <!-- INCLUDE FILES -->
+  <xacro:include filename="$(find robot_description)/urdf/Arm_assembly.urdf.xacro"/>
+  <xacro:include filename="$(find robot_description)/urdf/ros2control.xacro"/>
+  <xacro:include filename="$(find robot_description)/urdf/gazebo.xacro"/>
+
+  <!-- BUILD ROBOT -->
+  <xacro:ros2_control_block/>
+  <xacro:gazebo_block/>
+
+</robot>

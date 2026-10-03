@@ -10,7 +10,7 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-install(DIRECTORY rcup_objects config meshes urdf launch DESTINATION share/${PROJECT_NAME}/)
+install(DIRECTORY rcup_objects config meshes urdf launch worlds DESTINATION share/${PROJECT_NAME}/)
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

@@ -13,13 +13,13 @@
         <visual name="base_link_visual">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/base_link.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/base_link.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="base_link_collision">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/base_link.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/base_link.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
 
@@ -40,13 +40,13 @@
         <visual name="link1_visual">
             <origin xyz="-0.03753819887451623 0.16137187769409533 0.0499999984935301" rpy="-1.5707963267948972 2.263292261842604e-15 -1.4329016358931765" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link1.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link1.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="link1_collision">
             <origin xyz="-0.03753819887451623 0.16137187769409533 0.0499999984935301" rpy="-1.5707963267948972 2.263292261842604e-15 -1.4329016358931765" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link1.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link1.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -59,13 +59,13 @@
         <visual name="link2_visual">
             <origin xyz="0.1659174891709117 -0.034739498800760875 0.250328893450339" rpy="0.13791264956862428 -0.016086890255214512 -0.002232659248270158" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link2.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link2.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="link2_collision">
             <origin xyz="0.1659174891709117 -0.034739498800760875 0.250328893450339" rpy="0.13791264956862428 -0.016086890255214512 -0.002232659248270158" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link2.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link2.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -78,13 +78,13 @@
         <visual name="link3_visual">
             <origin xyz="0.2642159907521304 -0.12122484215005706 0.03666668402709977" rpy="-1.4329153603464382 -0.0019516759096357078 -1.5567322881815595" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link3.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link3.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="link3_collision">
             <origin xyz="0.2642159907521304 -0.12122484215005706 0.03666668402709977" rpy="-1.4329153603464382 -0.0019516759096357078 -1.5567322881815595" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link3.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link3.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -97,13 +97,13 @@
         <visual name="link4_visual">
             <origin xyz="0.07932782337477236 0.2469388385744769 0.08263357936889111" rpy="-3.126581793418305 0.35706491786985606 -1.5675011670871788" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link4.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link4.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="link4_collision">
             <origin xyz="0.07932782337477236 0.2469388385744769 0.08263357936889111" rpy="-3.126581793418305 0.35706491786985606 -1.5675011670871788" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link4.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link4.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -116,13 +116,13 @@
         <visual name="link5_visual">
             <origin xyz="-0.07070859554835131 -0.23812142491223257 -0.14360878712422676" rpy="1.5861851414203965 -0.013859047172337942 -0.35710948600343884" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link5.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link5.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="link5_collision">
             <origin xyz="-0.07070859554835131 -0.23812142491223257 -0.14360878712422676" rpy="1.5861851414203965 -0.013859047172337942 -0.35710948600343884" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link5.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link5.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -135,13 +135,13 @@
         <visual name="link6_visual">
             <origin xyz="1.2091060597185789e-09 4.764207801599696e-09 -1.2197904908362035e-10" rpy="-1.5608734092050633 0.2661279038047181 -0.015754050819791802" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link6.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link6.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="link6_collision">
             <origin xyz="1.2091060597185789e-09 4.764207801599696e-09 -1.2197904908362035e-10" rpy="-1.5608734092050633 0.2661279038047181 -0.015754050819791802" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/link6.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/link6.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -154,13 +154,13 @@
         <visual name="Soft_finger_1_visual">
             <origin xyz="-0.0022059695912784606 -0.004882435066304681 0.014876005276538429" rpy="3.0578763804063023 -0.2531050091908627 0.3768056949612244" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/Soft_finger_1.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/Soft_finger_1.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="Soft_finger_1_collision">
             <origin xyz="-0.0022059695912784606 -0.004882435066304681 0.014876005276538429" rpy="3.0578763804063023 -0.2531050091908627 0.3768056949612244" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/Soft_finger_1.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/Soft_finger_1.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -173,13 +173,13 @@
         <visual name="Soft_finger_2_visual">
             <origin xyz="-0.003850123319460117 -0.005209890021992578 0.01442336545659309" rpy="-3.1316697359999566 -0.26612790380472257 0.015754050819791247" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/Soft_finger_2.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/Soft_finger_2.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="Soft_finger_2_collision">
             <origin xyz="-0.003850123319460117 -0.005209890021992578 0.01442336545659309" rpy="-3.1316697359999566 -0.26612790380472257 0.015754050819791247" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/Soft_finger_2.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/Soft_finger_2.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -192,13 +192,13 @@
         <visual name="AX_12A_01_visual">
             <origin xyz="0.0031248681318762194 0.010734304113808584 -0.012592557664950875" rpy="0.8241440367976023 -1.5500870621606404 -2.6609928529842324" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/AX_12A_01.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/AX_12A_01.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="AX_12A_01_collision">
             <origin xyz="0.0031248681318762194 0.010734304113808584 -0.012592557664950875" rpy="0.8241440367976023 -1.5500870621606404 -2.6609928529842324" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/AX_12A_01.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/AX_12A_01.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -211,13 +211,13 @@
         <visual name="AX_12A_02_visual">
             <origin xyz="0.0008956910236866023 -0.0025363287034182846 0.012962054304978637" rpy="-2.3174486167921926 1.5500870621606395 2.660992852984249" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/AX_12A_02.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/AX_12A_02.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="AX_12A_02_collision">
             <origin xyz="0.0008956910236866023 -0.0025363287034182846 0.012962054304978637" rpy="-2.3174486167921926 1.5500870621606395 2.660992852984249" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/AX_12A_02.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/AX_12A_02.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -230,13 +230,13 @@
         <visual name="AX_12A_03_visual">
             <origin xyz="0.0013596762204496926 0.01195466381035061 0.0023952562436191016" rpy="2.8754522571900396 0.00957358508084527 -1.5891601611840465" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/AX_12A_03.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/AX_12A_03.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="AX_12A_03_collision">
             <origin xyz="0.0013596762204496926 0.01195466381035061 0.0023952562436191016" rpy="2.8754522571900396 0.00957358508084527 -1.5891601611840465" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/AX_12A_03.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/AX_12A_03.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -249,13 +249,13 @@
         <visual name="AX_12A_04_visual">
             <origin xyz="0.0017607307048155363 -0.006463816564347109 -9.423452190461036e-05" rpy="-2.317448616792229 1.5500870621606417 2.66099285298433" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/AX_12A_04.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/AX_12A_04.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="AX_12A_04_collision">
             <origin xyz="0.0017607307048155363 -0.006463816564347109 -9.423452190461036e-05" rpy="-2.317448616792229 1.5500870621606417 2.66099285298433" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/AX_12A_04.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/AX_12A_04.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -268,13 +268,13 @@
         <visual name="Gear_Flange_Motor_visual">
             <origin xyz="0.0010511849185925826 -0.0038589977903183835 -5.625289857050575e-05" rpy="1.5567298120389736 -0.015199409263172443 -2.8754332590191867" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/Gear_Flange_Motor.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/Gear_Flange_Motor.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="Gear_Flange_Motor_collision">
             <origin xyz="0.0010511849185925826 -0.0038589977903183835 -5.625289857050575e-05" rpy="1.5567298120389736 -0.015199409263172443 -2.8754332590191867" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/Gear_Flange_Motor.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/Gear_Flange_Motor.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
@@ -287,13 +287,13 @@
         <visual name="Gear_Flange_Driven_visual">
             <origin xyz="0.0023918310966156045 -1.067519965474162e-05 -0.0034947799580093888" rpy="0.08371627318348981 0.2531050091908637 -2.7647869586285765" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/Gear_Flange_Driven.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/Gear_Flange_Driven.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision name="Gear_Flange_Driven_collision">
             <origin xyz="0.0023918310966156045 -1.067519965474162e-05 -0.0034947799580093888" rpy="0.08371627318348981 0.2531050091908637 -2.7647869586285765" />
             <geometry>
-                <mesh filename="file://$(find arm_urdf)/meshes/Gear_Flange_Driven.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://custom_arm_description/meshes/Gear_Flange_Driven.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>

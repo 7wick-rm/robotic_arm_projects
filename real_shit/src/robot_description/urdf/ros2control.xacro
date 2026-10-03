@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="ros2_control_block">
+
+    <!-- ================================================================
+         REAL HARDWARE TEST MODE (Option A: no Gazebo)
+         Joint1, Joint2 -> real servos via arm_servo_controller/ArmServoHardware
+         Joint3, Joint4, Joint5, Jaw, Jaw2 -> mock_components/GenericSystem
+         ================================================================ -->
+    <xacro:if value="$(arg real_hw_test)">
+
+      <ros2_control name="ArmServoSystem" type="system">
+        <hardware>
+          <plugin>arm_servo_controller/ArmServoHardware</plugin>
+          <param name="port">/dev/ttyACM0</param>
+        </hardware>
+
+        <joint name="Joint4">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+          <param name="id">3</param>
+        </joint>
+
+        <joint name="Joint5">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+          <param name="id">2</param>
+        </joint>
+      </ros2_control>
+
+      <ros2_control name="MockArmSystem" type="system">
+        <hardware>
+          <plugin>mock_components/GenericSystem</plugin>
+        </hardware>
+
+        <joint name="Joint1">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+        </joint>
+
+        <joint name="Joint2">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+        </joint>
+
+        <joint name="Joint3">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+        </joint>
+
+        <joint name="Jaw">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">0.1</param>
+          </command_interface>
+          <state_interface name="position"/>
+        </joint>
+
+        <joint name="Jaw2">
+          <command_interface name="position">
+            <param name="min">-0.1</param>
+            <param name="max">0.0</param>
+          </command_interface>
+          <state_interface name="position"/>
+        </joint>
+      </ros2_control>
+
+    </xacro:if>
+
+    <!-- ================================================================
+         SIMULATION MODE (unchanged, original behavior)
+         ================================================================ -->
+    <xacro:unless value="$(arg real_hw_test)">
+
+      <ros2_control name="GazeboSystem" type="system">
+
+        <!-- ros2_control Gazebo -->
+        <!-- ROS 2 Humble -->
+        <xacro:if value="$(arg is_ignition)">
+          <hardware>
+            <plugin>ign_ros2_control/IgnitionSystem</plugin>
+          </hardware>
+        </xacro:if>
+
+        <!-- ROS 2 Iron or above -->
+        <xacro:unless value="$(arg is_ignition)">
+          <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+          </hardware>
+        </xacro:unless>
+
+        <!-- ARM -->
+
+        <joint name="Joint1">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+        </joint>
+
+        <joint name="Joint2">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+        </joint>
+
+        <joint name="Joint3">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+        </joint>
+
+        <joint name="Joint4">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+        </joint>
+
+        <joint name="Joint5">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">2.618</param>
+          </command_interface>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+        </joint>
+
+        <!-- GRIPPER -->
+
+        <joint name="Jaw">
+          <command_interface name="position">
+            <param name="min">0.0</param>
+            <param name="max">0.1</param>
+          </command_interface>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+        </joint>
+
+        <joint name="Jaw2">
+          <command_interface name="position">
+            <param name="min">-0.1</param>
+            <param name="max">0.0</param>
+          </command_interface>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+        </joint>
+
+      </ros2_control>
+
+    </xacro:unless>
+
+  </xacro:macro>
+
+</robot>

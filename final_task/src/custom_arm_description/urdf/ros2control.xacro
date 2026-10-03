@@ -4,18 +4,9 @@
   <ros2_control name="RobotSystem" type="system">
 
     <!-- ROS 2 Humble / Ignition Gazebo -->
-    <xacro:if value="$(arg is_ignition)">
-      <hardware>
-        <plugin>ign_ros2_control/IgnitionSystem</plugin>
-      </hardware>
-    </xacro:if>
-
-    <!-- ROS 2 Iron or above / Gazebo Sim -->
-    <xacro:unless value="$(arg is_ignition)">
-      <hardware>
-        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-      </hardware>
-    </xacro:unless>
+    <hardware>
+      <plugin>ign_ros2_control/IgnitionSystem</plugin>
+    </hardware>
 
     <!-- Joint 1 - Base rotation (z-axis) -->
     <joint name="base_link_link1_to_base_link">
@@ -24,6 +15,7 @@
         <param name="max">3.14159</param>
       </command_interface>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
 
     <!-- Joint 2 -->
@@ -33,6 +25,7 @@
         <param name="max">3.14159</param>
       </command_interface>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
 
     <!-- Joint 3 -->
@@ -42,6 +35,8 @@
         <param name="max">3.14159</param>
       </command_interface>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
+
     </joint>
 
     <!-- Joint 4 -->
@@ -51,6 +46,7 @@
         <param name="max">3.14159</param>
       </command_interface>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
 
     <!-- Joint 5 -->
@@ -60,6 +56,7 @@
         <param name="max">3.14159</param>
       </command_interface>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
 
     <!-- Joint 6 -->
@@ -69,6 +66,7 @@
         <param name="max">3.14159</param>
       </command_interface>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
 
     <!-- Gripper Joint - Driven Gear -->
@@ -78,6 +76,7 @@
         <param name="max">3.14159</param>
       </command_interface>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
 
     <!-- Gripper Joint - Motor Gear -->
@@ -87,6 +86,7 @@
         <param name="max">3.14159</param>
       </command_interface>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
 
   </ros2_control>

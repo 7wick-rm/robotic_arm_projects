@@ -241,6 +241,16 @@
         <limit upper="0.07" lower="-0.04" effort="10" velocity="10" />
         <mimic joint="${prefix}gripperHousing-v2_Slider-13" />
     </joint>
+
+    <gazebo>
+        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+            <parameters>$(find arm_urdf_moveit_config)/config/ros2_controllers.yaml</parameters>
+        </plugin>
+        <plugin filename="ignition-gazebo-sensors-system" name="ignition::gazebo::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+    </gazebo>
+
     </xacro:macro>
     
 </robot>

@@ -4,8 +4,10 @@ from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable
-from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution, PythonExpression
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, \
+    SetEnvironmentVariable, TimerAction
+from launch.substitutions import Command, LaunchConfiguration, \
+    PathJoinSubstitution, PythonExpression
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
@@ -13,34 +15,30 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
-    custom_arm_description = get_package_share_directory("custom_arm_description")
+    robo_description = get_package_share_directory("scara_description")
 
     model_arg = DeclareLaunchArgument(
         name="model", default_value=os.path.join(
-                custom_arm_description, "urdf", "arm.urdf.xacro"
+                robo_description, "urdf", "scara_main.urdf.xacro"
             ),
-        description="Absolute path to robot urdf file"
+        description="Path to robot urdf file"
     )
 
     world_name_arg = DeclareLaunchArgument(name="world_name", default_value="empty")
 
     world_path = PathJoinSubstitution([
-            custom_arm_description,
+            robo_description,
             "worlds",
             PythonExpression(expression=["'", LaunchConfiguration("world_name"), "'", " + '.world'"])
         ]
     )
 
-    model_path = str(Path(custom_arm_description).parent.resolve())
-    model_path += pathsep + os.path.join(get_package_share_directory("custom_arm_description"), 'models')
+    model_path = str(Path(robo_description).parent.resolve())
+    model_path += pathsep + "/home/sathwik/scara/src/scara_description/models"
 
-    gazebo_resource_path = SetEnvironmentVariable(
-        "GZ_SIM_RESOURCE_PATH",
-        model_path
-        )
+    gazebo_resource_path = SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", model_path)
 
-    ros_distro = os.environ["ROS_DISTRO"]
-    is_ignition = "True" if ros_distro == "humble" else "False"
+    is_ignition = "True"
 
     robot_description = ParameterValue(Command([
             "xacro ",
@@ -66,30 +64,55 @@ def generate_launch_description():
                 }.items()
              )
 
-
     gz_spawn_entity = Node(
         package="ros_gz_sim",
         executable="create",
         output="screen",
         arguments=[
-            "-topic", "robot_description",
-            "-name", "arm_urdf",
-            "-x", "0.6",  
-            "-y", "0.1",  
-            "-z", "1.1",  
-            "-R", "0.0", 
+            "-topic", "/robot_description",
+            "-name", "scara",
+            "-x", "0.0",
+            "-y", "0.0",
+            "-z", "0.0",
+            "-R", "0.0",
             "-P", "0.0",
-            "-Y", "0.0", # Yaw (in radians, e.g., 1.57 for 90 degrees)
+            "-Y", "0.0",
         ],
     )
-
 
     gz_ros2_bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
         arguments=[
-            "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock"
+            "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
         ],
+    )
+
+    joint_state_broadcaster_spawner = TimerAction(
+        period=3.0,
+        actions=[Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=["joint_state_broadcaster"],
+        )]
+    )
+
+    arm_controller_spawner = TimerAction(
+        period=4.0,
+        actions=[Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=["arm_controller"],
+        )]
+    )
+
+    gripper_controller_spawner = TimerAction(
+        period=4.0,
+        actions=[Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=["gripper_controller"],
+        )]
     )
 
     return LaunchDescription([
@@ -99,5 +122,8 @@ def generate_launch_description():
         robot_state_publisher_node,
         gazebo,
         gz_spawn_entity,
-        gz_ros2_bridge
+        gz_ros2_bridge,
+        joint_state_broadcaster_spawner,
+        arm_controller_spawner,
+        gripper_controller_spawner,
     ])

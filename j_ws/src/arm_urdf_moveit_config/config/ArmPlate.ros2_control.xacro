@@ -5,8 +5,7 @@
 
         <ros2_control name="${prefix}${name}" type="system">
             <hardware>
-                <!-- By default, set up controllers for simulation. This won't work on real hardware -->
-                <plugin>mock_components/GenericSystem</plugin>
+                <plugin>ign_ros2_control/IgnitionSystem</plugin>
             </hardware>
             <joint name="${prefix}Base_link1-v1_Revolute-1">
                 <command_interface name="position"/>
