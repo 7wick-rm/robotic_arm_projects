@@ -17,7 +17,7 @@ controller_manager:
 
     # Mocked: Jaw, Jaw2 (mock_components/GenericSystem)
     gripper_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
+      type: gripper_action_controller/GripperActionController
 
 
 joint_state_broadcaster:
@@ -47,10 +47,6 @@ mock_arm_controller:
 
 gripper_controller:
   ros__parameters:
-    joints:
-      - Jaw
-      - Jaw2
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
+    joint: Jaw
+    action_name: gripper_cmd
+    allow_stalling: true

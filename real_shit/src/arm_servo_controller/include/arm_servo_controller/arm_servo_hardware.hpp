@@ -12,6 +12,7 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 
 #include "motion_sdk/servo.hpp"
+#include "motion_sdk/gripper_servo.hpp"
 #include "motion_sdk/usb_serial.hpp"
 
 namespace arm_servo_controller
@@ -37,6 +38,10 @@ private:
   std::vector<double> velocity_state_;
   std::vector<double> effort_state_;
   std::vector<double> position_command_;
+
+  std::vector<std::string> joint_type_;                                    // "ax18a" | "mg995"
+  std::vector<std::unique_ptr<motion_sdk::GripperServo>> gripper_servos_;   // nullptr for ax18a joints
+  double gripper_open_threshold_{0.05};  // meters; midpoint default, overridden in on_init()
 
   std::string port_;
   std::vector<int> servo_ids_;

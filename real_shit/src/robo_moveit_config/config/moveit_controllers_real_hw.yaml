@@ -30,9 +30,7 @@ moveit_simple_controller_manager:
     default: true
 
   gripper_controller:
-    type: FollowJointTrajectory
-    joints:
-      - Jaw
-      - Jaw2
-    action_ns: follow_joint_trajectory
+    type: GripperCommand
+    joints: [Jaw]
+    action_ns: gripper_cmd
     default: true

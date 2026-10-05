@@ -26,6 +26,15 @@ hardware_interface::CallbackReturn ArmServoHardware::on_init(
 
   port_ = info_.hardware_parameters.at("port");
 
+  // Threshold (in command-interface units, meters for Jaw) above which a
+  // commanded position is treated as "open" for mg995 joints. Overridable
+  // via a <param name="gripper_open_threshold"> on the <hardware> block;
+  // falls back to the 0.05 default set in the header.
+  if (info_.hardware_parameters.count("gripper_open_threshold"))
+  {
+    gripper_open_threshold_ = std::stod(info_.hardware_parameters.at("gripper_open_threshold"));
+  }
+
   serial_ = std::make_unique<motion_sdk::USBSerial>(port_, 115200);
   if (!serial_->open())
   {
@@ -35,18 +44,31 @@ hardware_interface::CallbackReturn ArmServoHardware::on_init(
 
   for (size_t i = 0; i < num_joints_; ++i)
   {
+    std::string type = info_.joints[i].parameters.count("type")
+      ? info_.joints[i].parameters.at("type") : "ax18a";
+    joint_type_.push_back(type);
+
     int id = std::stoi(info_.joints[i].parameters.at("id"));
     servo_ids_.push_back(id);
 
-    auto servo = std::make_unique<motion_sdk::Servo>(*serial_, id);
-    if (!servo->ping())
+    if (type == "mg995")
     {
-      RCLCPP_ERROR(logger_, "Servo ping failed id=%d", id);
-      return CallbackReturn::ERROR;
+      servos_.push_back(nullptr);  // keep index-aligned, unused for this joint
+      gripper_servos_.push_back(
+        std::make_unique<motion_sdk::GripperServo>(*serial_, id));
+      // no ping(); MG995 can't respond to a position query
     }
-    // RCLCPP_INFO(logger_, "FAKE INIT for testing");
-
-    servos_.push_back(std::move(servo));
+    else
+    {
+      auto servo = std::make_unique<motion_sdk::Servo>(*serial_, id);
+      if (!servo->ping())
+      {
+        RCLCPP_ERROR(logger_, "Servo ping failed id=%d", id);
+        return CallbackReturn::ERROR;
+      }
+      servos_.push_back(std::move(servo));
+      gripper_servos_.push_back(nullptr);
+    }
   }
 
   RCLCPP_INFO(logger_, "Arm servo hardware initialized (%ld joints)", num_joints_);
@@ -80,13 +102,25 @@ hardware_interface::return_type ArmServoHardware::read(
 {
   for (size_t i = 0; i < num_joints_; ++i)
   {
+    if (joint_type_[i] == "mg995")
+    {
+      // MG995 has no position/effort/speed feedback at all -- it's a
+      // dumb PWM-driven servo switched by the STM firmware. Mirror the
+      // last commanded position so allowed_start_tolerance validation
+      // and RViz's displayed joint state stay sane; velocity/effort
+      // have no meaningful value here, so leave them at zero.
+      position_state_[i] = position_command_[i];
+      velocity_state_[i] = 0.0;
+      effort_state_[i] = 0.0;
+      continue;
+    }
+
     float deg{}, eff{}, spd{};
     servos_[i]->getPosition(deg);
     servos_[i]->getEffort(eff);
     servos_[i]->getSpeed(spd);
 
-    position_state_[i] = (deg)*M_PI / 180.0;
-    ;
+    position_state_[i] = (deg) * M_PI / 180.0;
     velocity_state_[i] = spd;
     effort_state_[i] = eff;
   }
@@ -98,8 +132,13 @@ hardware_interface::return_type ArmServoHardware::write(
 {
   for (size_t i = 0; i < num_joints_; ++i)
   {
-    // position_command_[i] = std::clamp(position_command_[i], 0.0, 300);
-    servos_[i]->setPosition((position_command_[i]) * 180 / M_PI);
+    if (joint_type_[i] == "mg995")
+    {
+      bool open = position_command_[i] > gripper_open_threshold_;
+      gripper_servos_[i]->setState(open);
+      continue;
+    }
+    servos_[i]->setPosition(position_command_[i] * 180 / M_PI);
   }
   return hardware_interface::return_type::OK;
 }

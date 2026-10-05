@@ -12,9 +12,9 @@
 
       <ros2_control name="ArmServoSystem" type="system">
         <hardware>
-          <plugin>arm_servo_controller/ArmServoHardware</plugin>
-          <param name="port">/dev/ttyACM0</param>
-        </hardware>
+	  <plugin>arm_servo_controller/ArmServoHardware</plugin>
+	  <param name="port">/dev/ttyACM0</param>
+	</hardware>
 
         <joint name="Joint4">
           <command_interface name="position">
@@ -33,6 +33,16 @@
           <state_interface name="position"/>
           <param name="id">2</param>
         </joint>
+
+          <joint name="Jaw">
+            <command_interface name="position">
+              <param name="min">0</param>
+              <param name="max">0.1</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <param name="id">4</param>
+            <param name="type">mg995</param>
+          </joint>
       </ros2_control>
 
       <ros2_control name="MockArmSystem" type="system">
@@ -64,21 +74,6 @@
           <state_interface name="position"/>
         </joint>
 
-        <joint name="Jaw">
-          <command_interface name="position">
-            <param name="min">0.0</param>
-            <param name="max">0.1</param>
-          </command_interface>
-          <state_interface name="position"/>
-        </joint>
-
-        <joint name="Jaw2">
-          <command_interface name="position">
-            <param name="min">-0.1</param>
-            <param name="max">0.0</param>
-          </command_interface>
-          <state_interface name="position"/>
-        </joint>
       </ros2_control>
 
     </xacro:if>

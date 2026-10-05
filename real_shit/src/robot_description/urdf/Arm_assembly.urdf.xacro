@@ -459,6 +459,7 @@
       upper="0.05"
       effort="100"
       velocity="10" />
+    <mimic joint="Jaw" multiplier="-1.0" offset="0.0"/>
   </joint>
   <link
     name="Servo6">
