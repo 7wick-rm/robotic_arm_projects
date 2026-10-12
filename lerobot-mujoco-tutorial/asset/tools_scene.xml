@@ -1,0 +1,74 @@
+<mujoco model="garage_tools">
+  <!--
+    Two trays + 4 tools, included by example_scene_tools.xml.
+    The tray bodies sit at z="0.80": that is a GUESS for your table-top height. Measure it (README step 2)
+    and edit the z of body_tray_src / body_tray_dst if needed.
+    World layout: robot pedestal at x=0 (slides along y). Trays centred 0.34 m in front of it:
+    source tray at y=-0.36, destination tray at y=+0.36  -> the slider must travel 0.72 m between them.
+    Each tray holds a 2x2 grid of slots (x = +-0.09, y = +-0.07 from tray centre), see y_env_tools.py.
+    Fingers of the gripper close along world Y, so tools lie along world X.
+  -->
+  <default>
+    <!-- Collision bitmasks: the trays are only CONTAINERS. They collide with the tools but NOT with the arm /
+         gripper (otherwise the fingertips rest on the tray floor and press on its walls, can not reach the
+         handle centre, and flat tools like the wrench slip out). Fingers keep the default contype/conaffinity 1/1. -->
+    <default class="tool">
+      <geom friction="1.2 0.02 0.002" condim="4" solref=".004 1" solimp=".95 .99 .001" contype="1" conaffinity="3"/>
+    </default>
+    <default class="tray">
+      <geom friction="0.8 0.01 0.001" contype="2" conaffinity="0"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <!-- TRAYS: static, deliberately NOT prefixed body_obj_ so they are never treated as objects -->
+    <body name="body_tray_src" pos="0.34 -0.36 0.80">
+      <geom class="tray" name="tray_src_floor" type="box" pos="0 0 0" size="0.18 0.14 0.02" rgba="0.25 0.25 0.28 1"/>
+      <geom class="tray" type="box" pos="0.175 0 0.03"  size="0.005 0.14 0.012" rgba="0.25 0.25 0.28 1"/>
+      <geom class="tray" type="box" pos="-0.175 0 0.03" size="0.005 0.14 0.012" rgba="0.25 0.25 0.28 1"/>
+      <geom class="tray" type="box" pos="0 0.135 0.03"  size="0.18 0.005 0.012" rgba="0.25 0.25 0.28 1"/>
+      <geom class="tray" type="box" pos="0 -0.135 0.03" size="0.18 0.005 0.012" rgba="0.25 0.25 0.28 1"/>
+    </body>
+
+    <body name="body_tray_dst" pos="0.34 0.36 0.80">
+      <geom class="tray" name="tray_dst_floor" type="box" pos="0 0 0" size="0.18 0.14 0.02" rgba="0.15 0.55 0.25 1"/>
+      <geom class="tray" type="box" pos="0.175 0 0.03"  size="0.005 0.14 0.012" rgba="0.15 0.55 0.25 1"/>
+      <geom class="tray" type="box" pos="-0.175 0 0.03" size="0.005 0.14 0.012" rgba="0.15 0.55 0.25 1"/>
+      <geom class="tray" type="box" pos="0 0.135 0.03"  size="0.18 0.005 0.012" rgba="0.15 0.55 0.25 1"/>
+      <geom class="tray" type="box" pos="0 -0.135 0.03" size="0.18 0.005 0.012" rgba="0.15 0.55 0.25 1"/>
+    </body>
+
+    <!-- TOOLS: body origin == grasp point; round >=2.4 cm handles; long axis along world X.
+         Initial pos is a placeholder: SimpleEnvTools.reset() re-places them. -->
+
+    <!-- wrench: blue -->
+    <body name="body_obj_wrench" pos="0.34 -0.34 0.86">
+      <freejoint name="fj_wrench"/>
+      <geom class="tool" type="box"      pos="0 0 0"      size="0.04 0.012 0.012" rgba="0.15 0.35 0.85 1" mass="0.05"/>
+      <geom class="tool" type="cylinder" pos="0.05 0 0"   size="0.02 0.012"       rgba="0.15 0.35 0.85 1" mass="0.02"/>
+      <geom class="tool" type="cylinder" pos="-0.05 0 0"  size="0.015 0.012"      rgba="0.15 0.35 0.85 1" mass="0.015"/>
+    </body>
+
+    <!-- screwdriver: red handle, silver shaft -->
+    <body name="body_obj_screwdriver" pos="0.34 -0.26 0.86">
+      <freejoint name="fj_screwdriver"/>
+      <geom class="tool" type="cylinder" fromto="-0.03 0 0 0.03 0 0"  size="0.015" rgba="0.85 0.12 0.12 1" mass="0.06"/>
+      <geom class="tool" type="capsule"  fromto="0.03 0 0 0.07 0 0"   size="0.004" rgba="0.75 0.75 0.78 1" mass="0.01"/>
+    </body>
+
+    <!-- hammer: yellow handle, dark head -->
+    <body name="body_obj_hammer" pos="0.34 -0.18 0.86">
+      <freejoint name="fj_hammer"/>
+      <geom class="tool" type="cylinder" fromto="-0.055 0 0 0.055 0 0" size="0.012" rgba="0.95 0.78 0.1 1" mass="0.05"/>
+      <geom class="tool" type="box"      pos="0.055 0 0"               size="0.012 0.035 0.018" rgba="0.2 0.2 0.22 1" mass="0.04"/>
+    </body>
+
+    <!-- pliers: green splayed handles + grey head -->
+    <body name="body_obj_pliers" pos="0.34 -0.10 0.86">
+      <freejoint name="fj_pliers"/>
+      <geom class="tool" type="capsule" fromto="0 0.002 0 -0.07 0.016 0"  size="0.01" rgba="0.1 0.7 0.3 1" mass="0.03"/>
+      <geom class="tool" type="capsule" fromto="0 -0.002 0 -0.07 -0.016 0" size="0.01" rgba="0.1 0.7 0.3 1" mass="0.03"/>
+      <geom class="tool" type="box"     pos="0.03 0 0"                     size="0.03 0.012 0.01" rgba="0.6 0.62 0.65 1" mass="0.03"/>
+    </body>
+  </worldbody>
+</mujoco>
