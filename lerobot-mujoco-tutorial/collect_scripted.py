@@ -12,7 +12,7 @@ from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
 
 REPO_NAME = 'garage_pnp'
 ROOT = './demo_data_garage'
-EPISODES_PER_TOOL = 0          # 25*4 = 100 scripted episodes
+EPISODES_PER_TOOL = 75          # 25*4 = 100 scripted episodes
 XML = './asset/example_scene_tools.xml'
 SEED = None                     # None -> different layouts every run
 MAX_TICKS = 700                 # 35 s at 20 Hz; abort a failed episode
