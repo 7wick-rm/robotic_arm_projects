@@ -1,0 +1,85 @@
+# Single source of truth for the real-robot deployment. Fill every <...>. After training, the numbers for `models:`
+# come from the training box: runs/trained_models.json (repo, task, duration_s, fps) - copy them over.
+
+mock: true                          # true = no hardware at all (rail + runner are simulated) -> test the menu flow
+arm_starts_at_rest: false            # set true only if you physically place the arm at rest before starting
+
+robot:
+  type: so101_follower
+  port: /dev/ttyACM0                 # find with: lerobot-find-port
+  id: my_follower_bot    # calibration is tied to this id
+  use_degrees: true                  # MUST equal what was used when the data was recorded (LeRobot default: true)
+  max_relative_target: 10            # degrees per step: bounds every motion. Start at 5-10, raise only when it is safe.
+  cameras:                           # names must match the dataset keys observation.images.<name>; copy from `prepare.py` output
+    front: {index_or_path: 0, width: 640, height: 480, fps: 30}
+    wrist: {index_or_path: 2, width: 640, height: 480, fps: 30}
+  rest_pose:                         # safe stow pose, joint values in degrees / gripper 0-100 (same units as the dataset state)
+    shoulder_pan.pos: 0
+    shoulder_lift.pos: -100
+    elbow_flex.pos: 95
+    wrist_flex.pos: 70
+    wrist_roll.pos: 0
+    gripper.pos: 0                   # EDIT: measure with `lerobot-teleoperate`/a short script; these are placeholders
+
+rail:                              # ESP32 firmware: hardware/rail_esp32/rail_esp32.ino (flash it with Arduino IDE first)
+  driver: esp32                      # esp32 | grbl
+  port: /dev/ttyUSB0                 # ls /dev/ttyUSB* /dev/ttyACM*  (the ESP32 and the SO-101 are different ports!)
+  baud: 115200
+  unit: pct                          # pct = percent of the MEASURED travel (0 = base switch, 100 = end switch) | mm
+  positions:
+    ws1_end: 100                     # end of the rail (firmware keeps it 3 mm inside the switch)
+    ws2_centre: 50
+    ws3_begin: 0                     # beginning of the rail (3 mm inside the base switch)
+  move_timeout_s: 90
+  boot_timeout_s: 15                 # seconds to wait for the ESP32 to answer after the port is opened (it resets, then WAITS: no motion)
+  home_timeout_s: 180                # the FIRST rail move homes first (full-length travel to both switches), the arm is already stowed then
+
+inference:
+  backend: remote                    # sync (policy on this laptop) | rtc | remote (policy on the Brev GPU, recommended: SmolVLA is too slow on CPU)
+  device: null                       # sync/rtc only: cuda | cpu
+  offline: false                     # true => HF_HUB_OFFLINE=1 (pre-download the 5 models first; sync/rtc only)
+  # remote backend ---------------------------------------------------------------------------------
+  endpoint: tcp/127.0.0.1:7447       # through the SSH tunnel the notebook opens (see README "Remote inference")
+  ssh_host: isaac-launchable-70b6b8  # name from `brev shell`/ssh config. Set null if you start the server yourself.
+  semantics: so101-degrees-gripper-percent-v1
+  load_timeout_s: 120
+  server_timeout_s: 180
+
+models:                              # path = folder of the trained model, the one that contains config.json + model.safetensors
+                                     #        (e.g. .../checkpoints/last/pretrained_model). task = EXACT training string (dataset meta/tasks.parquet).
+                                     # backend sync/rtc: path is on THIS laptop. backend remote: the folder is copied to the Brev box (run order step 8).
+  screw:       {policy: act,     path: "<PATH_TO_SCREW_MODEL>/pretrained_model",        task: "<string>", duration_s: 60}
+  hammer:      {policy: smolvla, path: "<PATH_TO_HAMMER_MODEL>/pretrained_model",       task: "<string>", duration_s: 60}
+  wrench:      {policy: smolvla, path: "<PATH_TO_WRENCH_MODEL>/pretrained_model",       task: "<string>", duration_s: 60}
+  burger:      {policy: smolvla, path: "<PATH_TO_BURGER_MODEL>/pretrained_model",       task: "<string>", duration_s: 90}
+  thor_hammer: {policy: smolvla, path: "<PATH_TO_THOR_HAMMER_MODEL>/pretrained_model",  task: "<string>", duration_s: 90}
+
+workspaces:
+  - id: 1
+    name: Screwing
+    rail_position: ws1_end
+    inputs: []                       # one model: no selection
+    options: {screw: {model: screw}}
+  - id: 2
+    name: Tool pick and place
+    rail_position: ws2_centre
+    inputs: [text, voice, vision]
+    options:                         # keywords are scoped to THIS workspace; gesture = number of fingers held up
+      hammer: {model: hammer, keywords: [hammer],            gesture: "1"}
+      wrench: {model: wrench, keywords: [wrench, spanner],   gesture: "2"}
+  - id: 3
+    name: Assembly
+    rail_position: ws3_begin
+    inputs: [text, voice]
+    options:
+      burger:      {model: burger,      keywords: [burger]}
+      thor_hammer: {model: thor_hammer, keywords: [thor, "thor's hammer", "thors hammer"]}
+
+voice:
+  whisper_model: base
+  prompt_by_workspace:
+    2: "hammer, wrench."
+    3: "burger, Thor's hammer."
+
+vision:
+  camera_index: 0                    # laptop webcam (NOT a robot camera)
