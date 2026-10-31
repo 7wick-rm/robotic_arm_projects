@@ -1,32 +1,28 @@
 # ros2_control config for real-hardware test mode (real_hw_test:=true)
-# Used with a standalone ros2_control_node, no Gazebo involved.
 controller_manager:
   ros__parameters:
-    update_rate: 20  # Hz
+    update_rate: 50  # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    # Real hardware: Joint1, Joint2 (arm_servo_controller/ArmServoHardware)
+    # Real: Joint3 (BLDC) + Joint4, Joint5 (AX-18A). One controller spanning both
+    # hardware components so the three joints get a single, synchronised goal.
     arm_servo_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-    # Mocked: Joint3, Joint4, Joint5 (mock_components/GenericSystem)
+    # Mocked: Joint1, Joint2
     mock_arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-    # Mocked: Jaw, Jaw2 (mock_components/GenericSystem)
+    # Real: Jaw (AX-18A). Jaw2 follows via <mimic> in the URDF.
     gripper_controller:
-      type: gripper_action_controller/GripperActionController
-
-
-joint_state_broadcaster:
-  ros__parameters:
-    publish_rate: 20
+      type: joint_trajectory_controller/JointTrajectoryController
 
 arm_servo_controller:
   ros__parameters:
     joints:
+      - Joint3
       - Joint4
       - Joint5
     command_interfaces:
@@ -39,7 +35,6 @@ mock_arm_controller:
     joints:
       - Joint1
       - Joint2
-      - Joint3
     command_interfaces:
       - position
     state_interfaces:
@@ -47,6 +42,9 @@ mock_arm_controller:
 
 gripper_controller:
   ros__parameters:
-    joint: Jaw
-    action_name: gripper_cmd
-    allow_stalling: true
+    joints:
+      - Jaw
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position

@@ -12,7 +12,6 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 
 #include "motion_sdk/servo.hpp"
-#include "motion_sdk/gripper_servo.hpp"
 #include "motion_sdk/usb_serial.hpp"
 
 namespace arm_servo_controller
@@ -39,9 +38,13 @@ private:
   std::vector<double> effort_state_;
   std::vector<double> position_command_;
 
-  std::vector<std::string> joint_type_;                                    // "ax18a" | "mg995"
-  std::vector<std::unique_ptr<motion_sdk::GripperServo>> gripper_servos_;   // nullptr for ax18a joints
-  double gripper_open_threshold_{0.05};  // meters; midpoint default, overridden in on_init()
+  // Per-joint conversion between the ros2_control unit and servo degrees:
+  //   servo_deg  = command * deg_per_unit_[i] + deg_offset_[i]
+  //   state      = (servo_deg - deg_offset_[i]) / deg_per_unit_[i]
+  // Revolute joints (rad):      deg_per_unit = 180/pi, offset = 0   (defaults)
+  // Prismatic joints (metres):  set <param name="deg_per_meter"> in the xacro
+  std::vector<double> deg_per_unit_;
+  std::vector<double> deg_offset_;
 
   std::string port_;
   std::vector<int> servo_ids_;
@@ -50,9 +53,6 @@ private:
   std::vector<std::unique_ptr<motion_sdk::Servo>> servos_;
 
   rclcpp::Logger logger_{rclcpp::get_logger("arm_servo_hardware")};
-
-  double meters_to_degrees(double m) const { return (m / 0.04) * 90.0; }
-  double degrees_to_meters(double d) const { return (d / 90.0) * 0.04; }
 };
 
 }  // namespace arm_servo_controller

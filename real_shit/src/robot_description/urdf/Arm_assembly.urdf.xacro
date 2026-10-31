@@ -8,6 +8,7 @@
 
   <link name="world"/>
   <xacro:arg name="is_ignition" default="true"/>
+  <xacro:arg name="real_hw_test" default="false"/>
 
 
 
@@ -100,10 +101,10 @@
     <axis
       xyz="0 0 1" />
     <limit
-        lower="0.0"
-        upper="2.618"
-        effort="1"
-        velocity="1.0"/>
+        lower="-3.14"
+        upper="3.14"
+        effort="100"
+        velocity="2.0"/>
   </joint>
 
   <joint name="base2world" type="fixed">
@@ -165,10 +166,10 @@
       xyz="-0.998759127785777 0.0498016532315323 0" />
 
     <limit
-        lower="0.0"
-        upper="2.618"
-        effort="1"
-        velocity="1.0"/>
+        lower="-3.14"
+        upper="3.14"
+        effort="100"
+        velocity="2.0"/>
 
     
     
@@ -224,10 +225,10 @@
     <axis
       xyz="-0.998759127785812 0.0498016532308395 0" />
     <limit
-        lower="0.0"
-        upper="2.618"
-        effort="1"
-        velocity="1.0"/>
+        lower="-3.14"
+        upper="3.14"
+        effort="100"
+        velocity="2.0"/>
   </joint>
   <link
     name="Link4">
@@ -287,10 +288,10 @@
     <axis
       xyz="0.998759127785812 -0.0498016532308386 0" />
     <limit
-        lower="0.0"
-        upper="2.618"
-        effort="1"
-        velocity="1.0"/>
+        lower="-3.14"
+        upper="3.14"
+        effort="100"
+        velocity="2.0"/>
   </joint>
   <link
     name="Link5">
@@ -343,10 +344,10 @@
     <axis
       xyz="0 0 -1" />
     <limit
-        lower="0.0"
-        upper="2.618"
-        effort="1"
-        velocity="1.0"/>
+        lower="-3.14"
+        upper="3.14"
+        effort="100"
+        velocity="2.0"/>
   </joint>
   <link
     name="Gripper">
@@ -459,7 +460,9 @@
       upper="0.05"
       effort="100"
       velocity="10" />
-    <mimic joint="Jaw" multiplier="-1.0" offset="0.0"/>
+    <xacro:if value="$(arg real_hw_test)">
+      <mimic joint="Jaw" multiplier="1.0" offset="0.0" />
+    </xacro:if>
   </joint>
   <link
     name="Servo6">

@@ -4,6 +4,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch.substitutions import Command, LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import yaml
@@ -25,11 +26,14 @@ def generate_launch_description():
         robot_description_pkg, 'urdf', 'Arm_assembly_main.urdf.xacro'
     )
 
-    robot_description_content = Command([
-        'xacro ', xacro_file,
-        ' real_hw_test:=true',
-        ' is_ignition:=false',
-    ])
+    robot_description_content = ParameterValue(
+        Command([
+            'xacro ', xacro_file,
+            ' real_hw_test:=true',
+            ' is_ignition:=false',
+        ]),
+        value_type=str,
+    )
     robot_description = {'robot_description': robot_description_content}
 
     robot_state_publisher_node = Node(
@@ -107,7 +111,17 @@ def generate_launch_description():
             moveit_controllers_real_hw,
             ompl_planning_yaml,
             {'use_sim_time': False},
+            # move_group is using the MoveItCpp-managed single pipeline with
+            # id "move_group" (see log: "Loading planning pipeline
+            # 'move_group'"), so the planner-selection key must be namespaced
+            # under that pipeline id. A bare "planning_plugin" key is ignored
+            # and move_group falls back to whichever planner plugin it finds
+            # first (CHOMP, in your case).
             {'move_group.planning_plugin': 'ompl_interface/OMPLPlanner'},
+            # Without this, OMPL's raw geometric path is never time-parameterized --
+            # waypoints get no meaningful time_from_start, which is exactly what
+            # produced the "Time between points 0 and 1 is not strictly increasing"
+            # error from arm_servo_controller.
             {'move_group.request_adapters': ' '.join([
                 'default_planner_request_adapters/ResolveConstraintFrames',
                 'default_planner_request_adapters/FixWorkspaceBounds',

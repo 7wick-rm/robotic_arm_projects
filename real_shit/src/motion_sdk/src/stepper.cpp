@@ -28,7 +28,7 @@ bool Stepper::ping()
 bool Stepper::setPosition(float angle_deg)
 {
   std::ostringstream cmd;
-  cmd << "SET_POS " << angle_deg;
+  cmd << "SET_POS " << angle_deg << " " << 1000;
   // std::cout << "TX: " << cmd.str() << std::endl;
   if (!serial_.writeLine(cmd.str()))
   {

@@ -1,9 +1,4 @@
 # MoveIt controller config for real-hardware test mode (real_hw_test:=true)
-# The single "arm" planning group (Joint1..Joint5) is split across two
-# FollowJointTrajectory controllers; moveit_simple_controller_manager
-# automatically sends each controller only the sub-trajectory for its
-# own joints.
-
 moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
 
 moveit_simple_controller_manager:
@@ -15,6 +10,7 @@ moveit_simple_controller_manager:
   arm_servo_controller:
     type: FollowJointTrajectory
     joints:
+      - Joint3
       - Joint4
       - Joint5
     action_ns: follow_joint_trajectory
@@ -25,12 +21,12 @@ moveit_simple_controller_manager:
     joints:
       - Joint1
       - Joint2
-      - Joint3
     action_ns: follow_joint_trajectory
     default: true
 
   gripper_controller:
-    type: GripperCommand
-    joints: [Jaw]
-    action_ns: gripper_cmd
+    type: FollowJointTrajectory
+    joints:
+      - Jaw          # Jaw2 is a mimic joint, so it is not in the trajectory
+    action_ns: follow_joint_trajectory
     default: true

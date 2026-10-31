@@ -16,7 +16,7 @@ arm_servo_controller:
   ros__parameters:
     joints:
       - joint_0
-      - joint_1
+      # - joint_1
     command_interfaces:
       - position
     state_interfaces:
