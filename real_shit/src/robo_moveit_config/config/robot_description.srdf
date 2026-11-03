@@ -32,10 +32,10 @@
         <joint name="Joint5" value="0"/>
     </group_state>
     <group_state name="open" group="gripper">
-        <joint name="Jaw" value="0.02"/>
+        <joint name="Jaw" value="0.0"/>
     </group_state>
     <group_state name="closed" group="gripper">
-        <joint name="Jaw" value="-0.005"/>
+        <joint name="Jaw" value="-0.023"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="end_effector" parent_link="tcp" group="gripper" parent_group="arm"/>

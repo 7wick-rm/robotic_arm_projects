@@ -400,8 +400,8 @@
     <axis
       xyz="1 0 0" />
     <limit
-      lower="-0.10"
-      upper="0.05"
+      lower="-0.023"
+      upper="0.0"
       effort="100"
       velocity="10" />
   </joint>
@@ -456,8 +456,8 @@
     <axis
       xyz="-1 0 0" />
     <limit
-      lower="-0.10"
-      upper="0.05"
+      lower="-0.023"
+      upper="0.0"
       effort="100"
       velocity="10" />
     <xacro:if value="$(arg real_hw_test)">

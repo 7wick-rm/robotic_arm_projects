@@ -22,7 +22,7 @@
         </hardware>
 
         <joint name="Joint3">
-          <param name="node_id">1</param>
+          <param name="node_id">0</param>
           <command_interface name="position"/>
           <state_interface name="position"/>
           <state_interface name="velocity"/>
@@ -43,7 +43,7 @@
             <param name="max">3.14</param>
           </command_interface>
           <state_interface name="position"/>
-          <param name="id">1</param>
+          <param name="id">3</param>
         </joint>
 
         <joint name="Joint5">
@@ -52,22 +52,26 @@
             <param name="max">3.14</param>
           </command_interface>
           <state_interface name="position"/>
-          <param name="id">2</param>
+          <param name="id">4</param>
         </joint>
 
-        <!-- Gripper - prismatic joint driven by an AX-18A through a rack and pinion.
-             deg_per_meter = servo degrees per metre of finger travel
-                             (default here = 90 deg / 0.04 m, the ratio that was in your header)
-             deg_offset    = servo angle (deg) that corresponds to Jaw = 0 m -->
+        <!-- Gripper - binary open/close. The STM firmware moves the servo (GRIPPER id 0 or 1) and
+             stops closing by itself when the grasp load passes its threshold, so ROS only picks
+             the state. open_deg and close_deg are the servo angles at the two ends of travel,
+             open_pos and close_pos are the matching Jaw values (same as the SRDF open and close). -->
         <joint name="Jaw">
           <command_interface name="position">
-            <param name="min">-0.10</param>
-            <param name="max">0.05</param>
+            <param name="min">-0.023</param>
+            <param name="max">0.0</param>
           </command_interface>
           <state_interface name="position"/>
-          <param name="id">3</param>
-          <param name="deg_per_meter">2250.0</param>
-          <param name="deg_offset">0.0</param>
+          <param name="id">2</param>
+          <param name="type">binary_gripper</param>
+          <param name="open_deg">60</param>
+          <param name="close_deg">110</param>
+          <param name="open_pos">0.0</param>
+          <param name="close_pos">-0.023</param>
+          <param name="gripper_hysteresis">0.1</param>
         </joint>
       </ros2_control>
 

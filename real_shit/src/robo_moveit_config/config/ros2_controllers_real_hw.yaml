@@ -42,9 +42,17 @@ mock_arm_controller:
 
 gripper_controller:
   ros__parameters:
-    joints:
+    joints: 
       - Jaw
     command_interfaces:
       - position
     state_interfaces:
       - position
+    # The STM stops closing on load, so the finger legitimately ends short of the
+    # commanded position when it holds an object. Do not check final-position tolerance.
+    constraints:
+      goal_time: 0.0
+      stopped_velocity_tolerance: 0.0
+      Jaw:
+        trajectory: 0.0
+        goal: 0.0
