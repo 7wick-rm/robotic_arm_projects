@@ -2,8 +2,12 @@
 
 #pragma once
 
+#include <condition_variable>
+#include <deque>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -20,6 +24,8 @@ namespace arm_servo_controller
 class ArmServoHardware : public hardware_interface::SystemInterface
 {
 public:
+  ~ArmServoHardware() override;
+
   hardware_interface::CallbackReturn on_init(
     const hardware_interface::HardwareInfo & info) override;
 
@@ -35,18 +41,31 @@ private:
   // closing by itself when the grasp load passes its threshold. ROS only decides open/close.
   struct GripperCfg
   {
-    double open_deg{60.0};     // servo angle when completely open
+    double open_deg{50.0};     // servo angle when completely open
     double close_deg{114.0};   // servo angle when completely closed
     double open_pos{0.0};      // Jaw joint value (m) when open   (SRDF "open")
     double close_pos{-0.023};  // Jaw joint value (m) when closed (SRDF "close")
     double hysteresis{0.1};    // dead band around the midpoint, as a fraction of the range
-    int last_sent{-1};         // -1 = nothing sent yet, 0 = open, 1 = close
-    int cooldown{0};           // control cycles to wait before retrying a failed command
+    int last_sent{-1};         // -1 = nothing sent yet, 0 = open, 1 = close   (guarded by q_mutex_)
+    int cooldown{0};           // control cycles to wait before retrying a failed command (q_mutex_)
+    bool busy{false};          // a command is queued or in flight                       (q_mutex_)
+  };
+
+  struct GripperRequest
+  {
+    size_t joint;
+    bool close;
   };
 
   double gripperPosFromDeg(const GripperCfg & g, double deg) const;
   double gripperFraction(const GripperCfg & g, double pos) const;  // 0 = open ... 1 = closed
+
+  // One request/response on the serial bus. The caller must hold bus_mutex_.
   bool sendGripper(size_t i, bool close);
+
+  // Background thread: sends gripper commands so a slow reply (the STM may only answer
+  // once the load-limited close has finished) can never stall the control loop.
+  void gripperWorker();
 
   size_t num_joints_;
 
@@ -70,6 +89,17 @@ private:
 
   std::unique_ptr<motion_sdk::USBSerial> serial_;
   std::vector<std::unique_ptr<motion_sdk::Servo>> servos_;
+
+  // The bus is strictly request/response, so only one thread may talk on it at a time.
+  // read() and write() use try_lock and simply skip a cycle while a gripper command is in
+  // flight (keeping the previous values); the gripper worker takes the lock and waits.
+  std::mutex bus_mutex_;
+
+  std::thread gripper_thread_;
+  std::mutex q_mutex_;
+  std::condition_variable q_cv_;
+  std::deque<GripperRequest> queue_;
+  bool stop_{false};
 
   rclcpp::Logger logger_{rclcpp::get_logger("arm_servo_hardware")};
 };

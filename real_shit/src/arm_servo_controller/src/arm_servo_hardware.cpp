@@ -1,6 +1,7 @@
 // Copyright 2026 <Robomanipal>
 #include "arm_servo_controller/arm_servo_hardware.hpp"
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <sstream>
 #include <pluginlib/class_list_macros.hpp>
@@ -10,6 +11,55 @@ using hardware_interface::HW_IF_VELOCITY;
 
 namespace arm_servo_controller
 {
+
+ArmServoHardware::~ArmServoHardware()
+{
+  {
+    std::lock_guard<std::mutex> lk(q_mutex_);
+    stop_ = true;
+  }
+  q_cv_.notify_all();
+  if (gripper_thread_.joinable())
+  {
+    gripper_thread_.join();
+  }
+}
+
+void ArmServoHardware::gripperWorker()
+{
+  std::unique_lock<std::mutex> lk(q_mutex_);
+  while (true)
+  {
+    q_cv_.wait(lk, [this] { return stop_ || !queue_.empty(); });
+    if (stop_)
+    {
+      return;
+    }
+    const GripperRequest req = queue_.front();
+    queue_.pop_front();
+    lk.unlock();
+
+    bool ok;
+    {
+      std::lock_guard<std::mutex> bus(bus_mutex_);  // waits for the bus; may take a while
+      ok = sendGripper(req.joint, req.close);
+    }
+
+    lk.lock();
+    auto & g = gripper_[req.joint];
+    g.busy = false;
+    if (ok)
+    {
+      g.last_sent = req.close ? 1 : 0;
+    }
+    else
+    {
+      RCLCPP_WARN(logger_, "GRIPPER command failed (id=%d), retrying shortly",
+                  servo_ids_[req.joint]);
+      g.cooldown = 25;  // ~0.5 s at 50 Hz
+    }
+  }
+}
 
 // Servo angle -> Jaw position (m). Clamped, so the reported state can never leave
 // the open..closed range even if the servo overshoots a degree or two.
@@ -33,6 +83,8 @@ bool ArmServoHardware::sendGripper(size_t i, bool close)
   std::ostringstream cmd;
   cmd << "GRIPPER " << servo_ids_[i] << " " << (close ? 1 : 0);
 
+  const auto t0 = std::chrono::steady_clock::now();
+
   if (!serial_->writeLine(cmd.str()))
   {
     return false;
@@ -44,11 +96,14 @@ bool ArmServoHardware::sendGripper(size_t i, bool close)
     return false;
   }
 
+  const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::steady_clock::now() - t0).count();
+
   if (resp != "OK")
   {
     RCLCPP_WARN(logger_, "Unexpected reply to '%s': '%s'", cmd.str().c_str(), resp.c_str());
   }
-  RCLCPP_INFO(logger_, "Sent '%s'", cmd.str().c_str());
+  RCLCPP_INFO(logger_, "Sent '%s' (reply after %ld ms)", cmd.str().c_str(), static_cast<long>(ms));
   return true;
 }
 
@@ -156,6 +211,11 @@ hardware_interface::CallbackReturn ArmServoHardware::on_init(
     servos_.push_back(std::move(servo));
   }
 
+  if (std::find(is_gripper_.begin(), is_gripper_.end(), 1) != is_gripper_.end())
+  {
+    gripper_thread_ = std::thread(&ArmServoHardware::gripperWorker, this);
+  }
+
   RCLCPP_INFO(logger_, "Arm servo hardware initialized (%ld joints)", num_joints_);
   return CallbackReturn::SUCCESS;
 }
@@ -185,6 +245,14 @@ std::vector<hardware_interface::CommandInterface> ArmServoHardware::export_comma
 hardware_interface::return_type ArmServoHardware::read(
   const rclcpp::Time &, const rclcpp::Duration &)
 {
+  // Bus busy with a gripper command (the STM may not answer anything else meanwhile):
+  // keep the previous values instead of blocking the control loop.
+  std::unique_lock<std::mutex> bus(bus_mutex_, std::try_to_lock);
+  if (!bus.owns_lock())
+  {
+    return hardware_interface::return_type::OK;
+  }
+
   // Position only: every extra blocking serial round-trip eats into the
   // controller_manager cycle and caused visible jitter under trajectory tracking.
   for (size_t i = 0; i < num_joints_; ++i)
@@ -204,17 +272,24 @@ hardware_interface::return_type ArmServoHardware::read(
 hardware_interface::return_type ArmServoHardware::write(
   const rclcpp::Time &, const rclcpp::Duration &)
 {
-  for (size_t i = 0; i < num_joints_; ++i)
+  // 1) Gripper: turn the commanded position into open / close and hand a command to the
+  //    worker only when the wanted state CHANGES. Never touches the serial port here.
   {
-    if (is_gripper_[i])
+    std::lock_guard<std::mutex> lk(q_mutex_);
+    for (size_t i = 0; i < num_joints_; ++i)
     {
-      // Binary gripper: turn the commanded position into open / close, and send a
-      // command only when the wanted state CHANGES. Re-sending every cycle would keep
-      // restarting the STM's load-limited close.
+      if (!is_gripper_[i])
+      {
+        continue;
+      }
       auto & g = gripper_[i];
       if (g.cooldown > 0)
       {
         --g.cooldown;
+        continue;
+      }
+      if (g.busy)
+      {
         continue;
       }
 
@@ -231,19 +306,25 @@ hardware_interface::return_type ArmServoHardware::write(
 
       if (want != -1 && want != g.last_sent)
       {
-        if (sendGripper(i, want == 1))
-        {
-          g.last_sent = want;
-        }
-        else
-        {
-          RCLCPP_WARN(logger_, "GRIPPER command failed (id=%d), retrying shortly", servo_ids_[i]);
-          g.cooldown = 25;  // ~0.5 s at 50 Hz
-        }
+        g.busy = true;
+        queue_.push_back({i, want == 1});
+        q_cv_.notify_one();
       }
+    }
+  }
+
+  // 2) Ordinary servos. Skipped (not blocked) while the bus is busy with a gripper command.
+  std::unique_lock<std::mutex> bus(bus_mutex_, std::try_to_lock);
+  if (!bus.owns_lock())
+  {
+    return hardware_interface::return_type::OK;
+  }
+  for (size_t i = 0; i < num_joints_; ++i)
+  {
+    if (is_gripper_[i])
+    {
       continue;
     }
-
     servos_[i]->setPosition(
       static_cast<float>(position_command_[i] * deg_per_unit_[i] + deg_offset_[i]));
   }
